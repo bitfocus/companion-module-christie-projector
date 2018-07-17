@@ -150,7 +150,7 @@ instance.prototype.tpatMser = [
 	{ label: 'White',            id: '3' },
 	{ label: 'Flat Grey',        id: '4' },
 	{ label: 'Black',            id: '5' },
-	{ lable: 'Checker',          id: '6' },
+	{ label: 'Checker',          id: '6' },
 	{ label: '13 Point',         id: '7' },
 	{ label: 'Color Bars',       id: '8' },
 	{ label: 'Aspect Ratio',     id: '11'},
@@ -317,7 +317,7 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'wrp':
-			cmd = '(WRP+SLCT ' + opt.wrpId + ' )';
+			cmd = '(WRP+SLCT ' + opt.warpSelId + ' )';
 			break;
 
 		//TODO make input select need to fetch the available input configurations from the projector
