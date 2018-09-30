@@ -203,7 +203,7 @@ instance.prototype.actions = function(system) {
 					id: 'pwrId',
 					choices: [
 						{ id: '0', label: 'Off' },
-					  { id: '1', label: 'On' }
+						{ id: '1', label: 'On' }
 					]
 				}
 			]
@@ -343,12 +343,6 @@ instance.prototype.action = function(action) {
 
 	// debug('action():', action);
 
-};
-
-instance.module_info = {
-	label: 'Christie projectors',
-	id: 'christiepj',
-	version: '0.0.1'
 };
 
 instance_skel.extendedBy(instance);
