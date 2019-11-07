@@ -83,58 +83,58 @@ instance.prototype.init_tcp = function() {
 				var data2 = data.substring( data.indexOf('ERR') + 3 );
 			
 				if (data2.includes('001')) {
-					msg = 'ERROR System Crash:';
+					msg = 'System Crash';
 				}
 
 				if (data2.includes('002')) {
-					msg = 'ERROR System Warning:';
+					msg = 'System Warning';
 				}
 
 				if (data2.includes('003')) {
-					msg = 'ERROR Invalid Parameter:';
+					msg = 'Invalid Parameter';
 				}
 
 				if (data2.includes('004')) {
-					msg = 'ERROR Too Many Parameters:';
+					msg = 'Too Many Parameters';
 				}
 
 				if (data2.includes('005')) {
-					msg = 'ERROR Too Few Parameters:';
+					msg = 'Too Few Parameters';
 				}
 
 				if (data2.includes('006')) {
-					msg = 'ERROR Source Does Not Exist:';
+					msg = 'Source Does Not Exist';
 				}
 
 				if (data2.includes('007')) {
-					msg = 'ERROR Could Not Be Executed:';
+					msg = 'Could Not Be Executed';
 				}
 
 				if (data2.includes('008')) {
-					msg = 'ERROR Checksum Error:';
+					msg = 'Checksum Error';
 				}
 
 				if (data2.includes('009')) {
-					msg = 'ERROR Unknown Request:';
+					msg = 'Unknown Request';
 				}
 
 				if (data2.includes('010')) {
-					msg = 'ERROR Communication Error:';
+					msg = 'Communication Error';
 				}
 
 				if (data2.includes('011')) {
-					msg = 'ERROR RX Break:';
+					msg = 'RX Break';
 				}
 
 				if (data2.includes('012')) {
-					msg = 'ERROR Supplementary Info:';
+					msg = 'Supplementary Info';
 				}
 
-				debug("Network Error", data);
-				self.status(self.STATE_ERROR, data);
-				self.log('error', msg + " " + data);
+				debug("Network Warning", data);
+				self.status(self.STATE_WARNING, 'Warning');
+				self.log('warn', 'Warning ' + msg + ': ' + data);
 
-				if (cmd_debug == true) { console.log('%s %s', msg, data); }
+				if (cmd_debug == true) { console.log('ChristiePj: Warning %s: %s', msg, data); }
 			}
 		})
 	}
@@ -1429,6 +1429,7 @@ instance.prototype.action = function(action) {
 
 		if (self.socket !== undefined && self.socket.connected) {
 			self.socket.send(cmd);
+			self.status(self.STATE_OK);
 		}
 		else {
 			debug('Socket not connected :(');
