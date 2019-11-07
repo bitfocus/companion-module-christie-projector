@@ -11,12 +11,13 @@ Documentation can be found at: http://www.qed-productions.com/downloads/christie
 * Bug Fixes
 * Added License
 
-**In The Works**
-
 **V2.0.0**
 * Added Readme.md
 * Added Help.md
 * Added +40 new commands for better control
+
+**V2.0.1**
+* Added Key Codes
 
 **Not implementet Yet**
 * Feedback

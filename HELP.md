@@ -42,6 +42,7 @@ Module to conntrol various Christie projectors
 * (ITP) Internal Test Pattern (Boxer)
 * (ITP) Internal Test Pattern (M-Series)
 * (KEN) Keypad Enable
+* (KEY) Key Code (release: key + 128)
 * (LCB) Lens Calibrate
 * (LCN) Lens Center
 * (LCO) Lamp Conditioning
@@ -71,6 +72,5 @@ Module to conntrol various Christie projectors
 **Not implementet Yet**
 * (FYI) For Your Information (Feedback)
 * (HIS) Lamp History (Feedback)
-* (KEY) Key Code (think about how to release: key + 128)
 * (LHO) Lens Horizontal Offset (start and stop commands?)
 * (LPH) Lamp Hours Of Use (Feedback)

@@ -100,8 +100,8 @@ instance.prototype.config_fields = function () {
 		{
 			type: 'textinput',
 			id: 'port',
-			label: 'Target port',
-			width: 4,
+			label: 'Target port (Default = 3002)',
+			width: 6,
 			default: '3002',
 			regex: self.REGEX_PORT
 		}
@@ -261,6 +261,59 @@ instance.prototype.keypadEnableP2 = [
 	{ label: 'Protocol E',			          id: '14'},
 	{ label: 'Protocol F',								id: '15'},
 	{ label: 'Protocol G',								id: '16'},
+];
+
+instance.prototype.keyCode = [
+	{ label: '0',								id: '0'  },
+	{ label: '1',								id: '1'  },
+	{ label: '2',								id: '2'  },
+	{ label: '3',								id: '3'  },
+	{ label: '4',								id: '4'  },
+	{ label: '5',								id: '5'  },
+	{ label: '6',								id: '6'  },
+	{ label: '7',								id: '7'  },
+	{ label: '8',								id: '8'  },
+	{ label: '9',								id: '9'  },
+	{ label: 'Shift',						id: '12' },
+	{ label: 'Enter',						id: '13' },
+	{ label: 'Func',						id: '14' },
+	{ label: 'Proj',						id: '22' },
+	{ label: 'Exit',						id: '27' },
+	{ label: 'Cont',						id: '41' },
+	{ label: 'Menu',						id: '44' },
+	{ label: 'Power',						id: '46' },
+	{ label: 'OSD',							id: '47' },
+	{ label: 'Up (On)',					id: '58' },
+	{ label: 'Down (Off)',			id: '59' },
+	{ label: 'Left (-)',				id: '60' },
+	{ label: 'Lamp',						id: '61' },
+	{ label: 'Right (+)',				id: '62' },
+	{ label: 'Help',						id: '63' },
+	{ label: 'Input',						id: '64' },
+	{ label: 'Input 1 / BNC',		id: '65' },
+	{ label: 'Input 2 / DVI',		id: '66' },
+	{ label: 'Input 3 / VID',		id: '67' },
+	{ label: 'Input 4 / S-Vid',	id: '68' },
+	{ label: 'Input 5 / Opt-1',	id: '69' },
+	{ label: 'Input 6 / Opt-2',	id: '70' },
+	{ label: 'Zoom IN',					id: '71' },
+	{ label: 'Zoom Out',				id: '72' },
+	{ label: 'Focus IN',				id: '73' },
+	{ label: 'Focus Out',				id: '74' },
+	{ label: 'Lens H Right',		id: '75' },
+	{ label: 'Lens H Left',			id: '76' },
+	{ label: 'Lens V Up',				id: '77' },
+	{ label: 'Lens V Down',			id: '78' },
+	{ label: 'Bright',					id: '80' },
+	{ label: 'Channel',					id: '81' },
+	{ label: 'Test',						id: '82' },
+	{ label: 'Shutter',					id: '83' },
+	{ label: 'PIP',							id: '84' },
+	{ label: 'Gamma',						id: '85' },
+	{ label: 'Auto',						id: '86' },
+	{ label: 'Focus',						id: '87' },
+	{ label: 'Zoom',						id: '88' },
+	{ label: 'Swap',						id: '89' },
 ];
 
 instance.prototype.lensCal = [
@@ -757,6 +810,18 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},		
+		'key':  {
+			label: 'Key Code / Key Press',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Select Key',
+					id: 'p1',
+					default: '0',
+					choices: self.keyCode
+				}
+			]
+		},	
 		'lcb':  {
 			label: 'Lens Calibrate',
 			options: [
@@ -1182,6 +1247,10 @@ instance.prototype.action = function(action) {
 
 		case 'ken':
 			cmd = '(KEN ' + opt.p1 + ' ' + opt.p2 + ')';
+			break;
+
+		case 'key':
+			cmd = '(KEY ' + opt.p1 + ')(KEY ' + (Number(opt.p1) + 128) + ')';
 			break;
 
 		case 'lcb':
