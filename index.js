@@ -2,6 +2,7 @@ var tcp = require('../../tcp');
 var instance_skel = require('../../instance_skel');
 var debug;
 var log;
+var cmd_debug = true;
 
 function pad2(num) {
 	var s = "00" + num;
@@ -74,7 +75,68 @@ instance.prototype.init_tcp = function() {
 			debug("Connected");
 		})
 
-		self.socket.on('data', function (data) {});
+		self.socket.on('data', function (d) {
+			var data = String(d);
+			var msg;
+			
+			if (data.includes('ERR')) {
+				var data2 = data.substring( data.indexOf('ERR') + 3 );
+			
+				if (data2.includes('001')) {
+					msg = 'ERROR System Crash:';
+				}
+
+				if (data2.includes('002')) {
+					msg = 'ERROR System Warning:';
+				}
+
+				if (data2.includes('003')) {
+					msg = 'ERROR Invalid Parameter:';
+				}
+
+				if (data2.includes('004')) {
+					msg = 'ERROR Too Many Parameters:';
+				}
+
+				if (data2.includes('005')) {
+					msg = 'ERROR Too Few Parameters:';
+				}
+
+				if (data2.includes('006')) {
+					msg = 'ERROR Source Does Not Exist:';
+				}
+
+				if (data2.includes('007')) {
+					msg = 'ERROR Could Not Be Executed:';
+				}
+
+				if (data2.includes('008')) {
+					msg = 'ERROR Checksum Error:';
+				}
+
+				if (data2.includes('009')) {
+					msg = 'ERROR Unknown Request:';
+				}
+
+				if (data2.includes('010')) {
+					msg = 'ERROR Communication Error:';
+				}
+
+				if (data2.includes('011')) {
+					msg = 'ERROR RX Break:';
+				}
+
+				if (data2.includes('012')) {
+					msg = 'ERROR Supplementary Info:';
+				}
+
+				debug("Network Error", data);
+				self.status(self.STATE_ERROR, data);
+				self.log('error', msg + " " + data);
+
+				if (cmd_debug == true) { console.log('%s %s', msg, data); }
+			}
+		})
 	}
 };
 

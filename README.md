@@ -18,6 +18,7 @@ Documentation can be found at: http://www.qed-productions.com/downloads/christie
 
 **V2.0.1**
 * Added Key Codes
+* Added suport for ERROR codes (If enabled with the "(EME)" command)
 
 **Not implementet Yet**
 * Feedback
