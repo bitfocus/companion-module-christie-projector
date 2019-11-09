@@ -44,10 +44,9 @@ instance.prototype.init = function() {
 	log = self.log;
 
 	self.status(1,'Connecting'); // status ok!
-
 	self.init_tcp();
+	self.update_variables(); // export variables
 };
-
 
 instance.prototype.init_tcp = function() {
 	var self = this;
@@ -76,11 +75,15 @@ instance.prototype.init_tcp = function() {
 		})
 
 		self.socket.on('data', function (d) {
+			var oldHasData = self.has_data = true;
 			var data = String(d);
 			var msg;
+
+			// Debug recived packet
+			if (cmd_debug == true) { console.log('Packet recived: %s', data); }
 			
 			if (data.includes('ERR')) {
-				var data2 = data.substring( data.indexOf('ERR') + 3 );
+				var data2 = data.substring(data.indexOf('ERR') + 3 );
 			
 				if (data2.includes('001')) {
 					msg = 'System Crash';
@@ -136,6 +139,181 @@ instance.prototype.init_tcp = function() {
 
 				if (cmd_debug == true) { console.log('ChristiePj: Warning %s: %s', msg, data); }
 			}
+
+			if (data.includes("FYI")) { // Typical packet: '(0002FYI 001 002 003 004 "Some Message")'
+				var split_data = []; 
+				var str = data.substring(data.indexOf('FYI') + 3 ); // Striped down to: ' 001 002 003 004 "Some Message")'
+
+				var x = 0;
+				var y = 0;
+
+				// Saves FYI Command
+				for (let i = 0; i < 4; i++) { 	// Striped down to: ' 001 002 003 004 "Some Message")'
+					x = str.indexOf(' ') + 1; 		// Get first " "
+					y = str.indexOf(' ', 1);			// Get seccond " "
+
+					split_data[i] = str.substring(x, y); // Saves the data between two spaces, with above example '001'
+					str = str.substring(y); 			// Saves the rest for next cycle: ' 002 003 004 "Some Message")'
+				}
+
+				// Saves FYI Message
+				msg = data.substring(data.indexOf('"') + 1);	// Saves the data after the first " with above example: 'Some Message")'
+				msg = msg.substring(0, msg.indexOf('"', 1)); 	// Saves the data between two ", with above example: 'Some Message' 
+
+				// Debugs packet and message to serial
+				if (cmd_debug == true) { console.log('FYI command recived:'); }
+				if (cmd_debug == true) { console.log(split_data[0]); }
+				if (cmd_debug == true) { console.log(split_data[1]); }
+				if (cmd_debug == true) { console.log(split_data[2]); }
+				if (cmd_debug == true) { console.log(split_data[3]); }
+				if (cmd_debug == true) { console.log(msg); }
+			
+				// Detect FYI Message Type
+				switch (split_data[0]) {
+
+					case '001': // Power
+						if (split_data[1] == '000') {
+							self.power_state = 'Off';				
+						} else if (split_data[1] == '001'){
+							self.power_state = 'On';				
+						} else if (split_data[1] == '002'){
+							self.power_state = 'Boot';				
+						} else if (split_data[1] == '010'){
+							self.power_state = 'Cool Down';				
+						} else if (split_data[1] == '011'){
+							self.power_state = 'Warm Up';				
+						}
+						self.setVariable('power_state', self.power_state);
+						self.checkFeedbacks('power_state');
+						self.has_data = true;
+						break;
+
+					case '002': // Proj. Address
+						// Do something
+						break;
+
+					case '003': // Proj. Selected
+						// Do something
+						break;
+
+					case '004': // Baud Rate
+						// Do something
+						break;
+
+					case '005': // Standby
+						if (split_data[1] == '000') {
+							self.standby = 'Off';				
+						} else if (split_data[1] == '001'){
+							self.standby = 'On';				
+						}
+						self.setVariable('standby', self.standby);
+						self.checkFeedbacks('standby');
+						self.has_data = true;
+						break;
+
+					case '006': // Signal
+						if (split_data[1] == '000') {
+							self.signal_state = 'Good Signal';				
+						} else if (split_data[1] == '001'){
+							self.signal_state = 'Signal Missing';				
+						} else if (split_data[1] == '002'){
+							self.signal_state = 'Bad Sync';				
+						}
+						self.setVariable('signal_state', self.signal_state);
+						self.checkFeedbacks('signal_state');
+						self.has_data = true;
+						break;
+
+					case '007': // OSD
+						if (split_data[1] == '000') {
+							self.osd_enabled = 'Off';				
+						} else if (split_data[1] == '001'){
+							self.osd_enabled = 'On';				
+						}
+						self.setVariable('osd_enabled', self.osd_enabled);
+						self.checkFeedbacks('osd_enabled');
+						self.has_data = true;
+						break;
+
+					case '009': // Shutter
+						if (split_data[1] == '000') {
+							self.shutter_closed = 'Open';				
+						} else if (split_data[1] == '001'){
+							self.shutter_closed = 'Closed';				
+						}
+						self.setVariable('shutter_closed', self.shutter_closed);
+						self.checkFeedbacks('shutter_closed');
+						self.has_data = true;
+						break;
+
+					case '010': // Input
+							self.input_channel = split_data[1];				
+							self.input_slot = self.inputSelect[Number(split_data[3]) - 1];				
+
+							self.setVariable('input_channel', self.input_channel);
+							self.setVariable('input_slot', self.input_slot.label);
+							self.checkFeedbacks('input_channel');
+							self.checkFeedbacks('input_slot');
+							self.has_data = true;
+							break;
+
+					case '011': // Picture Myte.
+						// Do something
+						break;
+
+					case '012': // PIP
+						if (split_data[1] == '000') {
+							self.pip_enabled = 'Off';				
+						} else if (split_data[1] == '001'){
+							self.pip_enabled = 'On';				
+						}
+						self.setVariable('pip_enabled', self.pip_enabled);
+						self.checkFeedbacks('pip_enabled');
+						self.has_data = true;
+						break;
+
+					case '255': // General / Misc.
+						// Do something
+						break;
+
+					default:
+						break;
+				}
+
+			}			
+
+			if (data.includes("LPH")) {
+				var split_data = []; 
+				var str = data.substring(data.indexOf('LPH') + 3 );
+				
+				var x = 0;
+				var y = 0;
+
+				for (let i = 0; i < 4; i++) { 	// Striped down to: ' 001 002 003 004 "Some Message")'
+					x = str.indexOf(' ') + 1; 		// Get first " "
+					y = str.indexOf(' ', 1);			// Get seccond " "
+
+					split_data[i] = str.substring(x, y); // Saves the data between two spaces, with above example '001'
+					str = str.substring(y); 			// Saves the rest for next cycle: ' 002 003 004 "Some Message")'
+				}
+
+				msg = data.substring(data.indexOf('"') + 1);	// Saves the data after the first " with above example: 'Some Message")'
+				msg = msg.substring(0, msg.indexOf('"', 1)); 	// Saves the data between two ", with above example: 'Some Message' 
+
+				self.lamp_1 = split_data[0];
+				self.lamp_2 = split_data[1];
+
+				self.setVariable('lamp_1', self.lamp_1);
+				self.setVariable('lamp_2', self.lamp_2);
+				self.has_data = true;
+			}
+
+			// Initial data from Christie
+			if (oldHasData != self.has_data && self.has_data) {
+				self.checkFeedbacks();
+				self.update_variables();
+			}
+						
 		})
 	}
 };
@@ -951,6 +1129,9 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
+		'lph':  {
+			label: 'Lamp Hours Of Use?',
+		},
 		'lpi':  {
 			label: 'Lamp Intensity',
 			options: [
@@ -1339,6 +1520,11 @@ instance.prototype.action = function(action) {
 			cmd = '(LPC ' + opt.p1 + ')';
 			break;
 
+		case 'lph':
+			cmd = '(LPH?)';
+			break;
+	
+
 		case 'lpi':
 			cmd = '(LPI ' + pad4(opt.p1) +')';
 			break;
@@ -1420,9 +1606,6 @@ instance.prototype.action = function(action) {
 
 	};
 
-
-
-
 	if (cmd !== undefined) {
 
 		debug('sending ',cmd,"to",self.config.host);
@@ -1438,6 +1621,447 @@ instance.prototype.action = function(action) {
 	}
 
 	// debug('action():', action);
+
+};
+
+instance.prototype.update_variables = function (system) {
+	var self = this;
+	var variables = [];
+
+	variables.push({
+		label: 'Total Hours On Lamp 1',
+		name: 'lamp_1'
+	});
+
+	variables.push({
+		label: 'Total Hours On Lamp 2',
+		name: 'lamp_2'
+	});
+
+	variables.push({
+		label: 'Power State',
+		name: 'power_state'
+	});
+
+	variables.push({
+		label: 'Standby',
+		name: 'standby'
+	});
+
+	variables.push({
+		label: 'Signal State',
+		name: 'signal_state'
+	});
+
+	variables.push({
+		label: 'OSD Enabled',
+		name: 'osd_enabled'
+	});
+
+	variables.push({
+		label: 'Shutter State',
+		name: 'shutter_closed'
+	});
+
+	variables.push({
+		label: 'Input Channel',
+		name: 'input_channel'
+	});
+
+	variables.push({
+		label: 'Input Slot',
+		name: 'input_slot'
+	});
+
+	variables.push({
+		label: 'PIP Enabled',
+		name: 'pip_enabled'
+	});
+
+	self.setVariable('lamp_1', 					self.lamp_1);
+	self.setVariable('lamp_2', 					self.lamp_2);
+	self.setVariable('power_state', 		self.power_state);
+	self.setVariable('standby', 				self.standby);
+	self.setVariable('signal_state', 		self.signal_state);
+	self.setVariable('osd_enabled', 		self.osd_enabled);
+	self.setVariable('shutter_closed', 	self.shutter_closed);
+	self.setVariable('input_channel', 	self.input_channel);
+	self.setVariable('input_slot', 			self.input_slot);
+	self.setVariable('pip_enabled', 		self.pip_enabled);
+
+	self.setVariableDefinitions(variables);
+
+	// feedbacks
+	var feedbacks = {};
+
+	feedbacks['signal_state'] = {
+		label: 'Signal Status',
+		description: 'Change colors of bank depending on signal status',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color on',
+				id: 'bg1',
+				default: self.rgb(0,204,0) // Green
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color off',
+				id: 'bg2',
+				default: self.rgb(255,0,0) // Rød
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color boot mode',
+				id: 'bg3',
+				default: self.rgb(255,255,0) // Yellow
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color cooldown',
+				id: 'bg4',
+				default: self.rgb(255,255,0) // Yellow
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color warm up',
+				id: 'bg5',
+				default: self.rgb(255,255,0) // Yellow
+			}
+		]
+	};
+
+	feedbacks['standby'] = {
+		label: 'Standby On / Off',
+		description: 'Change colors of bank if standby mode is on or not',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color Off',
+				id: 'bg1',
+				default: self.rgb(255,0,0) // Red
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color On',
+				id: 'bg2',
+				default: self.rgb(0,204,0) // Green
+			}
+		]
+	};
+
+	feedbacks['signal_state'] = {
+		label: 'Signal Status',
+		description: 'Change colors of bank depending on signal status',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color good signal',
+				id: 'bg1',
+				default: self.rgb(0,204,0) // Green
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color signal missing',
+				id: 'bg2',
+				default: self.rgb(255,0,0) // Rød
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color bad sync',
+				id: 'bg3',
+				default: self.rgb(255,255,0) // Yellow
+			}
+		]
+	};
+
+	feedbacks['osd_enabled'] = {
+		label: 'OSD On / Off',
+		description: 'Change colors of bank if On-Screne-Display mode is on or not',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color Off',
+				id: 'bg1',
+				default: self.rgb(255,0,0) // Red
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color On',
+				id: 'bg2',
+				default: self.rgb(0,204,0) // Green
+			}
+		]
+	};
+
+	feedbacks['shutter_closed'] = {
+		label: 'Shutter is closed',
+		description: 'Change colors of bank if the shutter is closed',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color Closed',
+				id: 'bg1',
+				default: self.rgb(255,0,0) // Red
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color Open',
+				id: 'bg2',
+				default: self.rgb(0,204,0) // Green
+			}
+		]
+	};
+
+	feedbacks['input_channel'] = {
+		label: 'Video Channel: Change background color',
+		description: 'If the channel specified is the active video channel, change colors of the bank',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color',
+				id: 'bg',
+				default: self.rgb(255,0,0) // Red
+			},
+			{
+				type: 'number',
+				id: 'input',
+				label: 'Channel: (1-50)',
+				min: 1,
+				max: 50,
+				default: 1,
+				required: true,
+				range: false,
+				regex: self.REGEX_NUMBER
+			}
+		]
+	};
+
+	feedbacks['input_slot'] = {
+		label: 'Input Slot: Change background color',
+		description: 'If the slot specified is the active input slot, change colors of the bank',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color',
+				id: 'bg',
+				default: self.rgb(255,0,0) // Red
+			},
+			{
+				type: 'dropdown',
+				label: 'Input',
+				id: 'input',
+				default: '1',
+				choices: self.inputSelect
+			}
+		]
+	};
+
+
+	feedbacks['pip_enabled'] = {
+		label: 'PIP On / Off',
+		description: 'Change colors of bank if Picture-in-Picture mode is on or not',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color Off',
+				id: 'bg1',
+				default: self.rgb(255,0,0) // Red
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color On',
+				id: 'bg2',
+				default: self.rgb(0,204,0) // Green
+			}
+		]
+	};
+
+	self.setFeedbackDefinitions(feedbacks);
+};
+
+instance.prototype.feedback = function(feedback, bank) {
+	var self = this;
+
+	if (feedback.type == 'power_state') {
+		if (self.power_state === 'On') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg1
+			};
+		}
+		else if (self.power_state === 'Off') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg2
+			};
+		}
+		else if (self.power_state === 'Boot') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg3
+			};
+		}
+		else if (self.power_state === 'Cool Down') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg4
+			};
+		}
+		else if (self.power_state === 'Warm Up') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg5
+			};
+		}
+	}	
+
+	else if (feedback.type == 'standby') {
+		if (self.standby === 'Off') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg1
+			};
+		}
+		else if (self.standby === 'On') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg2
+			};
+		}
+	}
+
+	else if (feedback.type == 'signal_state') {
+		if (self.signal_state === 'Good Signal') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg1
+			};
+		}
+		else if (self.signal_state === 'Signal Missing') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg2
+			};
+		}
+		else if (self.signal_state === 'Bad Sync') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg3
+			};
+		}
+	}
+
+	else if (feedback.type == 'osd_enabled') {
+		if (self.osd_enabled === 'Off') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg1
+			};
+		}
+		else if (self.osd_enabled === 'On') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg2
+			};
+		}
+	}
+
+	else if (feedback.type == 'shutter_closed') {
+		if (self.shutter_closed === 'Closed') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg1
+			};
+		}
+		else if (self.shutter_closed === 'Open') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg2
+			};
+		}
+	}
+
+	else 	if (feedback.type == 'input_channel') {
+		if (self.input_channel == pad3(feedback.options.input)) {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg
+			};
+		}
+	}
+
+	else 	if (feedback.type == 'input_slot') {
+		if (self.input_slot.id == feedback.options.input) {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg
+			};
+		}
+	}
+
+	else if (feedback.type == 'pip_enabled') {
+		if (self.pip_enabled === 'Off') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg1
+			};
+		}
+		else if (self.pip_enabled === 'On') {
+			return {
+				color: feedback.options.fg,
+				bgcolor: feedback.options.bg2
+			};
+		}
+	}
 
 };
 

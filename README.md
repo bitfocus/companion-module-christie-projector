@@ -20,6 +20,8 @@ Documentation can be found at: http://www.qed-productions.com/downloads/christie
 * Added Key Codes
 * Added suport for ERROR codes (If enabled with the "(EME)" command)
 
+**V2.0.2**
+* Added Feedback from (FYI) + (LPH) Commands
+
 **Not implementet Yet**
-* Feedback
 * Presets

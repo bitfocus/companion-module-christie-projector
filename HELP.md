@@ -49,6 +49,7 @@ Module to conntrol various Christie projectors
 * (LNG) Language
 * (LOP) Lamp Operation
 * (LPC) Lamp Changed (Max 8 Character Serial)
+* (LPH) Lamp Hours Of Use
 * (LPI) Lamp Intensity
 * (LPM) Lamp Mode
 * (MOT) Motion Filter
@@ -69,8 +70,12 @@ Module to conntrol various Christie projectors
 * (WRP) Geometry Correction (M-Series & Boxer)
 * (ZOM) Zoom (Fixed)
 
-**Not implementet Yet**
+**Supported Feedback**
+* (ERR) Error Message (Feedback)
 * (FYI) For Your Information (Feedback)
+* (LPH) Lamp Hours Of Use (Feedback kinda, needs vertification)
+
+
+**Not implementet Yet**
 * (HIS) Lamp History (Feedback)
 * (LHO) Lens Horizontal Offset (start and stop commands?)
-* (LPH) Lamp Hours Of Use (Feedback)
