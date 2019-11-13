@@ -2,7 +2,7 @@ var tcp = require('../../tcp');
 var instance_skel = require('../../instance_skel');
 var debug;
 var log;
-var cmd_debug = true;
+var cmd_debug = false; // Set to true to enable debug commands to console.
 
 function pad2(num) {
 	var s = "00" + num;
@@ -176,15 +176,20 @@ instance.prototype.init_tcp = function() {
 					case '001': // Power
 						if (split_data[1] == '000') {
 							self.power_state = 'Off';				
-						} else if (split_data[1] == '001'){
+						} 
+						else if (split_data[1] == '001'){
 							self.power_state = 'On';				
-						} else if (split_data[1] == '002'){
+						} 
+						else if (split_data[1] == '002'){
 							self.power_state = 'Boot';				
-						} else if (split_data[1] == '010'){
+						} 
+						else if (split_data[1] == '010'){
 							self.power_state = 'Cool Down';				
-						} else if (split_data[1] == '011'){
+						} 
+						else if (split_data[1] == '011'){
 							self.power_state = 'Warm Up';				
 						}
+
 						self.setVariable('power_state', self.power_state);
 						self.checkFeedbacks('power_state');
 						self.has_data = true;
@@ -205,9 +210,11 @@ instance.prototype.init_tcp = function() {
 					case '005': // Standby
 						if (split_data[1] == '000') {
 							self.standby = 'Off';				
-						} else if (split_data[1] == '001'){
+						} 
+						else if (split_data[1] == '001'){
 							self.standby = 'On';				
 						}
+						
 						self.setVariable('standby', self.standby);
 						self.checkFeedbacks('standby');
 						self.has_data = true;
@@ -216,11 +223,14 @@ instance.prototype.init_tcp = function() {
 					case '006': // Signal
 						if (split_data[1] == '000') {
 							self.signal_state = 'Good Signal';				
-						} else if (split_data[1] == '001'){
+						} 
+						else if (split_data[1] == '001'){
 							self.signal_state = 'Signal Missing';				
-						} else if (split_data[1] == '002'){
+						} 					
+						else if (split_data[1] == '002'){
 							self.signal_state = 'Bad Sync';				
 						}
+						
 						self.setVariable('signal_state', self.signal_state);
 						self.checkFeedbacks('signal_state');
 						self.has_data = true;
@@ -229,9 +239,11 @@ instance.prototype.init_tcp = function() {
 					case '007': // OSD
 						if (split_data[1] == '000') {
 							self.osd_enabled = 'Off';				
-						} else if (split_data[1] == '001'){
+						} 
+						else if (split_data[1] == '001'){
 							self.osd_enabled = 'On';				
 						}
+
 						self.setVariable('osd_enabled', self.osd_enabled);
 						self.checkFeedbacks('osd_enabled');
 						self.has_data = true;
@@ -240,9 +252,11 @@ instance.prototype.init_tcp = function() {
 					case '009': // Shutter
 						if (split_data[1] == '000') {
 							self.shutter_closed = 'Open';				
-						} else if (split_data[1] == '001'){
+						}
+						else if (split_data[1] == '001'){
 							self.shutter_closed = 'Closed';				
 						}
+
 						self.setVariable('shutter_closed', self.shutter_closed);
 						self.checkFeedbacks('shutter_closed');
 						self.has_data = true;
@@ -251,6 +265,7 @@ instance.prototype.init_tcp = function() {
 					case '010': // Input
 							self.input_channel = split_data[1];				
 							self.input_slot = self.inputSelect[Number(split_data[3]) - 1].id;				
+						
 							self.setVariable('input_channel', self.input_channel);
 							self.setVariable('input_slot', self.inputSelect[Number(split_data[3])-1].label);
 							self.checkFeedbacks('input_channel');
@@ -265,9 +280,11 @@ instance.prototype.init_tcp = function() {
 					case '012': // PIP
 						if (split_data[1] == '000') {
 							self.pip_enabled = 'Off';				
-						} else if (split_data[1] == '001'){
+						} 
+						else if (split_data[1] == '001'){
 							self.pip_enabled = 'On';				
 						}
+
 						self.setVariable('pip_enabled', self.pip_enabled);
 						self.checkFeedbacks('pip_enabled');
 						self.has_data = true;
@@ -308,6 +325,9 @@ instance.prototype.init_tcp = function() {
 				self.setVariable('lamp_2', self.lamp_2);
 				self.has_data = true;
 			}
+
+			// Migth need some code to request current setup.
+			// For now it should react to changes, but need someone to test to be sure.
 
 			// Initial data from Christie
 			if (oldHasData != self.has_data && self.has_data) {
