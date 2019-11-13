@@ -21,7 +21,7 @@ Documentation can be found at: http://www.qed-productions.com/downloads/christie
 * Added suport for ERROR codes (If enabled with the "(EME)" command)
 
 **V2.0.2**
-* Added Feedback from (FYI) + (LPH) Commands
+* Added feedback from (FYI) + (LPH) commands
 
-**Not implementet Yet**
-* Presets
+**V2.0.3**
+* Presets for nearly all commands

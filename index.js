@@ -43,9 +43,11 @@ instance.prototype.init = function() {
 	debug = self.debug;
 	log = self.log;
 
-	self.status(1,'Connecting'); // status ok!
-	self.init_tcp();
-	self.update_variables(); // export variables
+	self.status(1,'Connecting'); 	// Status ok!
+	self.init_tcp();							// Init TCP
+	self.update_variables(); 			// Export Variables
+	self.checkFeedbacks();				// Export Feedbacks
+	self.init_presets();					// Export Presets
 };
 
 instance.prototype.init_tcp = function() {
@@ -248,10 +250,9 @@ instance.prototype.init_tcp = function() {
 
 					case '010': // Input
 							self.input_channel = split_data[1];				
-							self.input_slot = self.inputSelect[Number(split_data[3]) - 1];				
-
+							self.input_slot = self.inputSelect[Number(split_data[3]) - 1].id;				
 							self.setVariable('input_channel', self.input_channel);
-							self.setVariable('input_slot', self.input_slot.label);
+							self.setVariable('input_slot', self.inputSelect[Number(split_data[3])-1].label);
 							self.checkFeedbacks('input_channel');
 							self.checkFeedbacks('input_slot');
 							self.has_data = true;
@@ -372,6 +373,21 @@ instance.prototype.destroy = function() {
 	debug("destroy", self.id);;
 };
 
+instance.prototype.OnOff = [
+	{ label: 'OFF',			id: '0' },
+	{ label: 'ON',			id: '1' },
+];
+
+instance.prototype.EnableDisable = [
+	{ label: 'Disable',	id: '0' },
+	{ label: 'Enable',	id: '1' },
+];
+
+instance.prototype.shutter = [
+	{ label: 'Open',		id: '0' },
+	{ label: 'Close',		id: '1' },
+];
+
 instance.prototype.colorProfile = [
 	{ label: 'Max Drives (Default)',	id: '0' },
 	{ label: 'Color Temperature',     id: '1' },
@@ -422,7 +438,7 @@ instance.prototype.imageOpti = [
 	{ label: 'Seamless Switching',	id: '2' },
 ];
 
-instance.prototype.tpatMser = [
+instance.prototype.tpatBasic = [
 	{ label: 'Off',                            id: '0' },
 	{ label: 'Grid',                           id: '1' },
 	{ label: 'Grey Scale 16',                  id: '2' },
@@ -486,21 +502,21 @@ instance.prototype.tpatMser = [
 ];
 
 instance.prototype.keypadEnableP1 = [
-	{ label: 'Wired',			id: '0' },
-	{ label: 'IR Front',	id: '1' },
-	{ label: 'IR Back',		id: '2' },
+	{ label: 'Wired',						id: '0' },
+	{ label: 'IR Front',				id: '1' },
+	{ label: 'IR Back',					id: '2' },
 ];
 
 instance.prototype.keypadEnableP2 = [
-	{ label: 'Off',                       id: '0' },
-	{ label: 'Responds to any protocol',	id: '1' },
-	{ label: 'Protocol A',	              id: '10'},
-	{ label: 'Protocol B',                id: '11'},
-	{ label: 'Protocol C',    	          id: '12'},
-	{ label: 'Protocol D',		            id: '13'},
-	{ label: 'Protocol E',			          id: '14'},
-	{ label: 'Protocol F',								id: '15'},
-	{ label: 'Protocol G',								id: '16'},
+	{ label: 'Off',							id: '0' },
+	{ label: 'Protocol Any',		id: '1' },
+	{ label: 'Protocol A',	  	id: '10'},
+	{ label: 'Protocol B',    	id: '11'},
+	{ label: 'Protocol C',    	id: '12'},
+	{ label: 'Protocol D',			id: '13'},
+	{ label: 'Protocol E',			id: '14'},
+	{ label: 'Protocol F',			id: '15'},
+	{ label: 'Protocol G',			id: '16'},
 ];
 
 instance.prototype.keyCode = [
@@ -666,6 +682,1486 @@ instance.prototype.warpSelMseries = [
 	{ label: 'Mseries User 16',                  id: '17' }
 ];
 
+instance.prototype.init_presets = function () {
+	var self = this;
+	var presets = [];
+	var pstSize = '18';
+
+	// ###################### Auto Source ######################
+
+	// Auto Source ON / OFF
+	for (var input = 0; input < 50; input++) {
+		for (var input2 in self.OnOff) {
+			presets.push({
+				category: 'Auto Source',
+				label: ' Auto Source ' + (input+1) + ' ' + self.OnOff[input2].label,
+				bank: {
+					style: 'text',
+					text: 'ASR CH ' + (input+1) + ' ' + self.OnOff[input2].label,
+					size: 'auto',
+					color: '16777215',
+					bgcolor: self.rgb(0, 0, 0)
+				},
+				actions: [
+					{
+						action: 'asr',
+						options: {
+							p1: (input+1),
+							p2: self.OnOff[input2].id
+						}
+					}
+				],
+			});
+		}
+	}
+
+	// ###################### Brightness ######################
+
+	// Brightness Set 0-100%
+	for (var input = 0; input < 11; input++) {
+		presets.push({
+			category: 'Brightness',
+			label: 'Brightness Set ' + (input*10) + '%',
+			bank: {
+				style: 'text',
+				text: 'Bright ' + (input*10) + '%',
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'brt',
+					options: {
+						p1: (input*100),
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Constrast ######################
+
+	// Contrast Set 0-100%
+	for (var input = 0; input < 11; input++) {
+		presets.push({
+			category: 'Contrast',
+			label: 'Contrast Set ' + (input*10) + '%',
+			bank: {
+				style: 'text',
+				text: 'Cont. ' + (input*10) + '%',
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'con',
+					options: {
+						p1: (input*100),
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Color ######################
+
+	// Color Set 0-100%
+	for (var input = 0; input < 11; input++) {
+		presets.push({
+			category: 'Color',
+			label: 'Color Set ' + (input*10) + '%',
+			bank: {
+				style: 'text',
+				text: 'Color ' + (input*10) + '%',
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'clr',
+					options: {
+						p1: (input*100),
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Tint ######################
+
+	// Tint Set 0-100%
+	for (var input = 0; input < 11; input++) {
+		presets.push({
+			category: 'Tint',
+			label: 'Tint Set ' + (input*10) + '%',
+			bank: {
+				style: 'text',
+				text: 'Tint ' + (input*10) + '%',
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'tnt',
+					options: {
+						p1: (input*100),
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Gamma ######################
+
+	// Gamma Set 100-280 = 1.8-2.0
+	for (var input = 0; input < 19; input++) {
+		presets.push({
+			category: 'Gamma',
+			label: 'Gamma Set ' + (input*10+100),
+			bank: {
+				style: 'text',
+				text: 'Gamma ' + (input*10+100),
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'gam',
+					options: {
+						p1: (input*10+100),
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Motion Filter ######################
+
+	// Motion Filter
+	for (var input in self.motionFilter) {
+		presets.push({
+			category: 'Motion Filter',
+			label: 'Motion Filter ' + self.motionFilter[input].label,
+			bank: {
+				style: 'text',
+				text: 'Motion ' + self.motionFilter[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'mot',
+					options: {
+						p1: self.motionFilter[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Picture / Image ######################
+
+	// Aspect Ratio Overlay ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'Image',
+			label: 'Aspect Ratio Overlay ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'ARO ' + self.OnOff[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'aro',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Freeze Image ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'Image',
+			label: 'Freeze Image ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'Freeze ' + self.OnOff[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'frz',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+		});
+	}
+	
+	// Select Color Output / Profile
+	for (var input in self.colorProfile) {
+		presets.push({
+			category: 'Image',
+			label: 'Select Color Output/Profile ' + self.colorProfile[input].label,
+			bank: {
+				style: 'text',
+				text: 'Color Prof. ' + self.colorProfile[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'ccs',
+					options: {
+						p1: self.colorProfile[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Color Space
+	for (var input in self.colorSpace) {
+		presets.push({
+			category: 'Image',
+			label: 'Color Space ' + self.colorSpace[input].label,
+			bank: {
+				style: 'text',
+				text: 'Color Space ' + self.colorSpace[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'csp',
+					options: {
+						p1: self.colorSpace[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Color Enable
+	for (var input in self.colorName) {
+		presets.push({
+			category: 'Image',
+			label: 'Color Enable ' + self.colorName[input].label,
+			bank: {
+				style: 'text',
+				text: 'Color En. ' + self.colorName[input].label,
+				size: '14',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'cle',
+					options: {
+						p1: self.colorName[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Input Filter
+	for (var input in self.inputFilter) {
+		presets.push({
+			category: 'Image',
+			label: 'Input Filter ' + self.inputFilter[input].label,
+			bank: {
+				style: 'text',
+				text: 'Filter ' + self.inputFilter[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'fil',
+					options: {
+						p1: self.inputFilter[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Image Optimazation
+	for (var input in self.imageOpti) {
+		presets.push({
+			category: 'Image',
+			label: 'Image Optimazation ' + self.imageOpti[input].label,
+			bank: {
+				style: 'text',
+				text: 'Image Op. ' + self.imageOpti[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'iop',
+					options: {
+						p1: self.imageOpti[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Position ######################
+
+	// Horizontal Position
+	presets.push({
+		category: 'Position',
+		label: 'Horizontal Position: 500',
+		bank: {
+			style: 'text',
+			text: 'Hori. Pos 500',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'hor',
+				options: {
+					p1: '500'
+				}
+			}
+		],
+	});
+
+	// Vertical Position
+	presets.push({
+		category: 'Position',
+		label: 'Vertical Position: 500',
+		bank: {
+			style: 'text',
+			text: 'Vert. Pos 500',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'vrt',
+				options: {
+					p1: '500'
+				}
+			}
+		],
+	});
+
+	// Screen Orientation
+	for (var input in self.selectOri) {
+		presets.push({
+			category: 'Position',
+			label: 'Screen Orientation ' + self.selectOri[input].label,
+			bank: {
+				style: 'text',
+				text: 'Orient. ' + self.selectOri[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'sor',
+					options: {
+						p1: self.selectOri[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Screen Size Preset
+	for (var input in self.size) {
+		presets.push({
+			category: 'Position',
+			label: 'Screen Size Preset ' + self.size[input].label,
+			bank: {
+				style: 'text',
+				text: 'Size Preset ' + self.size[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'szp',
+					options: {
+						p1: self.size[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Warp Select (Basic) ######################
+
+	// Warp Select (Basic)
+	for (var input in self.warpSelBasic) {
+		presets.push({
+			category: 'Warp Select (Basic)',
+			label: 'Warp Select (Basic) ' + self.warpSelBasic[input].label,
+			bank: {
+				style: 'text',
+				text: 'Warp Basic: ' + self.warpSelBasic[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'wps',
+					options: {
+						p1: self.warpSelBasic[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Warp Select (M-series/Boxer) ######################
+
+	// Warp Select (M-series/Boxer)
+	for (var input in self.warpSelMseries) {
+		presets.push({
+			category: 'Warp Select (M-Serise)',
+			label: 'Warp Select (M-series/Boxer) ' + self.warpSelMseries[input].label,
+			bank: {
+				style: 'text',
+				text: 'Warp Mser: ' + self.warpSelMseries[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'wrp',
+					options: {
+						p1: self.warpSelMseries[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Lens ######################
+
+	// Automatic Lens Calibration ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'Lens',
+			label: 'Automatic Lens Calibration ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'Lamp Auto Cali. ' + self.OnOff[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'alc',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Lens Calibrate
+	for (var input in self.lensCal) {
+		presets.push({
+			category: 'Lens',
+			label: 'Lens Calibrate ' + self.lensCal[input].label,
+			bank: {
+				style: 'text',
+				text: 'Lamp Cali. ' + self.lensCal[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'lcb',
+					options: {
+						p1: self.lensCal[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Lens Center	
+	presets.push({
+		category: 'Lens',
+		label: 'Lens Center',
+		bank: {
+			style: 'text',
+			text: 'Lens Center',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'lcn'
+			}
+		],
+	});
+
+	// Intelligent Lens System ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'Lens',
+			label: 'Intelligent Lens System ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'ILS ' + self.OnOff[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'ils',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Zoom	
+	presets.push({
+		category: 'Lens',
+		label: 'Zoom',
+		bank: {
+			style: 'text',
+			text: 'Zoom 5000',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'zom',
+				options: {
+					p1: '3000'
+				}
+			}
+		],
+	});
+
+	// Focus	
+	presets.push({
+		category: 'Lens',
+		label: 'Focus',
+		bank: {
+			style: 'text',
+			text: 'Focus 4000',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'fcs',
+				options: {
+					p1: '4000'
+				}
+			}
+		],
+	});
+	
+	// ###################### Lamp ######################
+
+	// Get Lamp ON Time
+	presets.push({
+		category: 'Lamp',
+		label: 'Get Lamp ON Time',
+		bank: {
+			style: 'text',
+			text: 'Get Lamp Time',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'lph'
+			}
+		],
+	});
+
+	// Lamp Conditioning ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'Lamp',
+			label: 'Lamp Conditioning ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'Lamp Con ' + self.OnOff[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'lco',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Lamp Operation
+	for (var input in self.lampOp) {
+		presets.push({
+			category: 'Lamp',
+			label: 'Lamp Operation ' + self.lampOp[input].label,
+			bank: {
+				style: 'text',
+				text: 'Lamp Op ' + self.lampOp[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'lop',
+					options: {
+						p1: self.lampOp[input].id
+					}
+				}
+			],
+		});
+	}
+	
+	// Lamp Mode
+	for (var input in self.lampMode) {
+		presets.push({
+			category: 'Lamp',
+			label: 'Lamp Mode ' + self.lampMode[input].label,
+			bank: {
+				style: 'text',
+				text: 'Lamp Mode ' + self.lampMode[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'lpm',
+					options: {
+						p1: self.lampMode[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// Lamp Intensity
+	presets.push({
+		category: 'Lamp',
+		label: 'Lamp Intensity',
+		bank: {
+			style: 'text',
+			text: 'Lamp Intencity 100',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'lpi',
+				options: {
+					p1: '100'
+				}
+			}
+		],
+	});
+
+	// Lamp Changed
+	presets.push({
+		category: 'Lamp',
+		label: 'Lamp Changed',
+		bank: {
+			style: 'text',
+			text: 'Lamp Changed',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'lpc',
+				options: {
+					p1: ''
+				}
+			}
+		],
+	});
+	
+	// ###################### Input Channel ######################
+
+	// Set Input Channel
+	for (let i = 0; i < 50; i++) {
+		presets.push({
+			category: 'Select Channel',
+			label: 'CH ' + (i+1),
+			bank: {
+				style: 'text',
+				text: 'CH ' + (i+1),
+				size: 'auto',
+				color: '16777215',
+				bgcolor: 0
+			},
+			actions: [{
+				action: 'cha',
+				options: {
+					p1: (i+1),
+				}
+			}],
+			feedbacks: [
+				{
+					type: 'input_channel',
+					options: {
+						fg1: self.rgb(255, 255, 255),
+						bg1: self.rgb(255, 0, 0),
+						input: (i+1)
+					}
+				}
+			]			
+		});
+
+	}
+
+	// ###################### Input Slot ######################
+
+	// Set Input Slot
+	for (var input in self.inputSelect) {
+		presets.push({
+			category: 'Input Slot',
+			label: 'Slot ' + self.inputSelect[input].label,
+			bank: {
+				style: 'text',
+				text: 'Slot ' + self.inputSelect[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: 0
+			},
+			actions: [{
+				action: 'sin',
+				options: {
+					p1: self.inputSelect[input].label,
+				}
+			}],
+			feedbacks: [
+				{
+					type: 'input_slot',
+					options: {
+						fg1: self.rgb(255, 255, 255),
+						bg1: self.rgb(255, 0, 0),
+						input: self.inputSelect[input].id
+					}
+				}
+			]			
+		});
+
+	}
+
+	// ###################### Internal Test Pattern (General/Basic) ######################
+
+	// Internal Test Pattern (General/Basic)
+	for (var input in self.tpatBasic) {
+		presets.push({
+			category: 'Test Pattern (Basic)',
+			label: 'Internal Test Pattern (General/Basic) ' + self.tpatBasic[input].label,
+			bank: {
+				style: 'text',
+				text: 'ITP ' + self.tpatBasic[input].label,
+				size: '14',
+				color: '16777215',
+				bgcolor: 0
+			},
+			actions: [{
+				action: 'itpBasic',
+				options: {
+					p1: self.tpatBasic[input].label,
+				}
+			}]
+		});
+	}
+
+	// ###################### Internal Test Pattern (Boxer) ######################
+
+	// Internal Test Pattern (Boxer)
+	for (var input in self.tpatBoxer) {
+		presets.push({
+			category: 'Test Pattern (Boxer)',
+			label: 'Internal Test Pattern (Boxer) ' + self.tpatBoxer[input].label,
+			bank: {
+				style: 'text',
+				text: 'ITP ' + self.tpatBoxer[input].label,
+				size: '14',
+				color: '16777215',
+				bgcolor: 0
+			},
+			actions: [{
+				action: 'itpBoxer',
+				options: {
+					p1: self.tpatBoxer[input].label,
+				}
+			}]
+		});
+	}
+
+	// ###################### Internal Test Pattern (M-Series) ######################
+
+	// Internal Test Pattern (Boxer)
+	for (var input in self.tpatMser) {
+		presets.push({
+			category: 'Test Pattern (M-Series)',
+			label: 'Internal Test Pattern (M-Series) ' + self.tpatMser[input].label,
+			bank: {
+				style: 'text',
+				text: 'ITP ' + self.tpatMser[input].label,
+				size: '14',
+				color: '16777215',
+				bgcolor: 0
+			},
+			actions: [{
+				action: 'itpMser',
+				options: {
+					p1: self.tpatMser[input].label,
+				}
+			}]
+		});
+	}
+
+	// ###################### Picture-In-Picture ######################
+
+	// PIP ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'PIP',
+			label: 'Picture In Picture ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'PIP ' + self.OnOff[input].label + ' $(ChristieProPj:pip_enabled)',
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'pip',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+			feedbacks: [
+				{
+					type: 'pip_enabled',
+					options: {
+						fg1: self.rgb(255, 255, 255),
+						bg1: self.rgb(255, 0, 0),
+						bg2: self.rgb(0, 204, 0),
+					}
+				}
+			]
+		});
+	}
+
+	// PIP Swap
+	presets.push({
+		category: 'PIP',
+		label: 'Picture In Picture Swap',
+		bank: {
+			style: 'text',
+			text: 'PIP Swap',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'pps',
+			}
+		],
+	});
+
+	// PIP Preset
+	for (var input in self.pipPreset) {
+		presets.push({
+			category: 'PIP',
+			label: 'Picture In Picture Preset' + self.pipPreset[input].label,
+			bank: {
+				style: 'text',
+				text: 'PIP ' + self.pipPreset[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'ppp',
+					options: {
+						p1: self.pipPreset[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Key Pad ######################
+
+	// Keypad Enable
+	for (var input in self.keypadEnableP1) {
+		for (var input2 in self.keypadEnableP2) {
+			presets.push({
+				category: 'Keypad ' + self.keypadEnableP1[input].label,
+				label: self.keypadEnableP1[input].label + ' ' + self.keypadEnableP2[input2].label,
+				bank: {
+					style: 'text',
+					text: self.keypadEnableP1[input].label + ' ' + self.keypadEnableP2[input2].label,
+					size: 'auto',
+					color: '16777215',
+					bgcolor: self.rgb(0, 0, 0)
+				},
+				actions: [
+					{
+						action: 'ken',
+						options: {
+							p1: self.keypadEnableP1[input].id,
+							p2: self.keypadEnableP2[input2].id
+						}
+					}
+				],
+			});
+		}
+	}
+
+	// ###################### Key Codes ######################
+
+	// Key Code
+	for (var input in self.keyCode) {
+		presets.push({
+			category: 'Key Codes',
+			label: 'Key Code:' + self.keyCode[input].label,
+			bank: {
+				style: 'text',
+				text: 'KEY: ' + self.keyCode[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'key',
+					options: {
+						p1: self.keyCode[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Language ######################
+
+	// Set Language
+	for (var input in self.language) {
+		presets.push({
+			category: 'Language',
+			label: 'Set Language:' + self.language[input].label,
+			bank: {
+				style: 'text',
+				text: 'LNG: ' + self.language[input].label,
+				size: '18',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'lng',
+					options: {
+						p1: self.language[input].id
+					}
+				}
+			],
+		});
+	}
+
+	// ###################### Commands ######################
+
+		// Auto Setup
+		presets.push({
+			category: 'Commands',
+			label: 'Auto Setup',
+			bank: {
+				style: 'text',
+				text: 'Auto Setup',
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'asu',
+				}
+			],
+		});
+
+	// Auto Power Up ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'Commands',
+			label: 'Auto Power Up ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'Auto PWR ' + self.OnOff[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'apw',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+		});
+	}
+		
+	// Power ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'Commands',
+			label: 'Power ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'PWR ' + self.OnOff[input].label +' $(ChristieProPj:power_state)',
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'pwr',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+			feedbacks: [
+				{
+					type: 'power_state',
+					options: {
+						fg1: self.rgb(255, 255, 255),
+						fg2: self.rgb(0, 0, 0),
+						bg1: self.rgb(0, 204, 0),
+						bg2: self.rgb(255, 0, 0),
+						bg3: self.rgb(255, 255, 0),
+						bg4: self.rgb(255, 255, 0),
+						bg5: self.rgb(255, 255, 0),
+					}
+				}
+			]
+		});
+	}
+
+	// Shutter Open / Close
+	for (var input in self.shutter) {
+		presets.push({
+			category: 'Commands',
+			label: 'Shutter ' + self.shutter[input].label,
+			bank: {
+				style: 'text',
+				text: 'Shutter ' + self.shutter[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'shu',
+					options: {
+						p1: self.shutter[input].id
+					}
+				}
+			],
+			feedbacks: [
+				{
+					type: 'shutter_closed',
+					options: {
+						fg1: self.rgb(255, 255, 255),
+						bg1: self.rgb(255, 0, 0),
+						bg2: self.rgb(0, 204, 0),
+					}
+				}
+			]
+		});
+	}
+
+	// OSD ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'Commands',
+			label: 'On Screen Display ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'OSD ' + self.OnOff[input].label + ' $(ChristieProPj:osd_enabled)',
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'osd',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+			feedbacks: [
+				{
+					type: 'obs_enabled',
+					options: {
+						fg1: self.rgb(255, 255, 255),
+						bg1: self.rgb(255, 0, 0),
+						bg2: self.rgb(0, 204, 0),
+					}
+				}
+			]
+		});
+	}
+
+	// Source Dialog Enable ON / OFF
+	for (var input in self.OnOff) {
+		presets.push({
+			category: 'Commands',
+			label: 'Source Dialog Enable ' + self.OnOff[input].label,
+			bank: {
+				style: 'text',
+				text: 'Source Dia En. ' + self.OnOff[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'sde',
+					options: {
+						p1: self.OnOff[input].id
+					}
+				}
+			],
+		});
+	}
+	
+	// Error Message Enable
+	for (var input in self.errorEnable) {
+		presets.push({
+			category: 'Commands',
+			label: 'Error Message Enable ' + self.errorEnable[input].label,
+			bank: {
+				style: 'text',
+				text: 'ERR MSG: ' + self.errorEnable[input].label,
+				size: 'auto',
+				color: '16777215',
+				bgcolor: self.rgb(0, 0, 0)
+			},
+			actions: [
+				{
+					action: 'eme',
+					options: {
+						p1: self.errorEnable[input].id
+					}
+				}
+			],
+		});
+	}
+	
+	// Get Lamp ON Time
+	presets.push({
+		category: 'Commands',
+		label: 'Get Lamp ON Time',
+		bank: {
+			style: 'text',
+			text: 'Get Lamp Time',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'lph'
+			}
+		],
+	});
+
+	// Factory Defaults
+	presets.push({
+		category: 'Commands',
+		label: 'Factory Defaults',
+		bank: {
+			style: 'text',
+			text: 'Factory Reset',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'def',
+				options: {
+					p1: '111'
+				}
+			}
+		],
+	});
+
+	// ###################### Status ######################
+
+	// Power State
+	presets.push({
+		category: 'Status',
+		label: 'Show Power State',
+		bank: {
+			style: 'text',
+			text: 'PWR: $(ChristieProPj:power_state)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		feedbacks: [
+			{
+				type: 'power_state',
+				options: {
+					fg1: self.rgb(255, 255, 255),
+					fg2: self.rgb(0, 0, 0),
+					bg1: self.rgb(0, 204, 0),
+					bg2: self.rgb(255, 0, 0),
+					bg3: self.rgb(255, 255, 0),
+					bg4: self.rgb(255, 255, 0),
+					bg5: self.rgb(255, 255, 0),
+				}
+			}
+		]
+	});
+
+	// Standby State
+	presets.push({
+		category: 'Status',
+		label: 'Show Standby State',
+		bank: {
+			style: 'text',
+			text: 'STB: $(ChristieProPj:standby)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		feedbacks: [
+			{
+				type: 'standby_state',
+				options: {
+					fg1: self.rgb(255, 255, 255),
+					bg1: self.rgb(255, 0, 0),
+					bg2: self.rgb(0, 204, 0),
+				}
+			}
+		]
+	});
+
+	// Signal present
+	presets.push({
+		category: 'Status',
+		label: 'Show Signal Status',
+		bank: {
+			style: 'text',
+			text: 'Signal: $(ChristiePj:signal_state)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		feedbacks: [
+			{
+				type: 'signal_state',
+				options: {
+					fg1: self.rgb(255, 255, 255),
+					fg2: self.rgb(0, 0, 0),
+					bg1: self.rgb(0, 204, 0),
+					bg2: self.rgb(255, 0, 0),
+					bg3: self.rgb(255, 255, 0),
+				}
+			}
+		]
+	});
+
+	// Shutter State
+	presets.push({
+		category: 'Status',
+		label: 'Show Shutter Status',
+		bank: {
+			style: 'text',
+			text: 'Shutter: $(ChristiePj:shutter_closed)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		feedbacks: [
+			{
+				type: 'shutter_closed',
+				options: {
+					fg1: self.rgb(255, 255, 255),
+					bg1: self.rgb(255, 0, 0),
+					bg2: self.rgb(0, 204, 0),
+				}
+			}
+		]
+	});
+	
+	// OSD State
+	presets.push({
+		category: 'Status',
+		label: 'Show On Screen Display Status',
+		bank: {
+			style: 'text',
+			text: 'OSD: $(ChristiePj:osd_state)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		feedbacks: [
+			{
+				type: 'signal_state',
+				options: {
+					fg1: self.rgb(255, 255, 255),
+					bg1: self.rgb(255, 0, 0),
+					bg2: self.rgb(0, 204, 0),
+				}
+			}
+		]
+	});
+
+	// PIP State
+	presets.push({
+		category: 'Status',
+		label: 'Show Picture In Picture Status',
+		bank: {
+			style: 'text',
+			text: 'PIP: $(ChristiePj:osd_state)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		feedbacks: [
+			{
+				type: 'pip_state',
+				options: {
+					fg1: self.rgb(255, 255, 255),
+					bg1: self.rgb(255, 0, 0),
+					bg2: self.rgb(0, 204, 0),
+				}
+			}
+		]
+	});
+
+	// Input Channel
+	presets.push({
+		category: 'Status',
+		label: 'Show Input Channel',
+		bank: {
+			style: 'text',
+			text: 'CH: $(ChristiePj:input_channel)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+	});
+
+	// Input Slot
+	presets.push({
+		category: 'Status',
+		label: 'Show Input Slot',
+		bank: {
+			style: 'text',
+			text: 'Slot: $(ChristiePj:input_slot)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+	});
+
+	// Lamp 1 ON Time
+	presets.push({
+		category: 'Status',
+		label: 'Show Lamp 1 ON Time',
+		bank: {
+			style: 'text',
+			text: 'Lamp 1: $(ChristiePj:lamp_1)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'lph'
+			}
+		],
+	});
+
+	// Lamp 2 ON Time
+	presets.push({
+		category: 'Status',
+		label: 'Show Lamp 2 ON Time',
+		bank: {
+			style: 'text',
+			text: 'Lamp 2: $(ChristiePj:lamp_2)',
+			size: 'auto',
+			color: '16777215',
+			bgcolor: self.rgb(0, 0, 0)
+		},
+		actions: [
+			{
+				action: 'lph'
+			}
+		],
+	});
+
+	self.setPresetDefinitions(presets);
+};
 
 instance.prototype.actions = function(system) {
 	var self = this;
@@ -679,10 +2175,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p1',
 					default: '0',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-				 ]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -694,10 +2187,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p1',
 					default: '0',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-				 ]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -709,10 +2199,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p1',
 					default: '0',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-				 ]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -735,10 +2222,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p2',
 					default: '0',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-				 ]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -908,10 +2392,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p1',
 					default: '0',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-				 ]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -955,10 +2436,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p1',
 					default: '1',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-					]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -1085,10 +2563,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p1',
 					default: '1',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-					]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -1180,10 +2655,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p1',
 					default: '1',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-					]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -1195,10 +2667,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p1',
 					default: '1',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-					]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -1225,10 +2694,7 @@ instance.prototype.actions = function(system) {
 					label: 'On / Off',
 					id: 'p1',
 					default: '1',
-					choices: [
-						{ id: '0', label: 'Off' },
-						{ id: '1', label: 'On' }
-					]
+					choices: self.OnOff
 				}
 			]
 		},
@@ -1240,10 +2706,7 @@ instance.prototype.actions = function(system) {
 					label: 'Show / Hide',
 					id: 'p1',
 					default: '1',
-					choices: [
-						{ id: '0', label: 'Hide' },
-						{ id: '1', label: 'Show' }
-				 ]
+					choices: self.EnableDisable
 				}
 			]
 		},
@@ -1255,10 +2718,7 @@ instance.prototype.actions = function(system) {
 					label: 'Open / Close',
 					id: 'p1',
 					default: '0',
-					choices: [
-						{ id: '0', label: 'Open' },
-						{ id: '1', label: 'Close' }
-					]
+					choices: self.shutter
 				}
 			]
 		},
@@ -1686,7 +3146,7 @@ instance.prototype.update_variables = function (system) {
 	self.setVariable('osd_enabled', 		self.osd_enabled);
 	self.setVariable('shutter_closed', 	self.shutter_closed);
 	self.setVariable('input_channel', 	self.input_channel);
-	self.setVariable('input_slot', 			self.input_slot);
+	self.setVariable('input_slot', 			self.inputSelect.label);
 	self.setVariable('pip_enabled', 		self.pip_enabled);
 
 	self.setVariableDefinitions(variables);
@@ -1694,15 +3154,21 @@ instance.prototype.update_variables = function (system) {
 	// feedbacks
 	var feedbacks = {};
 
-	feedbacks['signal_state'] = {
-		label: 'Signal Status',
-		description: 'Change colors of bank depending on signal status',
+	feedbacks['power_state'] = {
+		label: 'Power State',
+		description: 'Change colors of bank depending on Power State',
 		options: [
 			{
 				type: 'colorpicker',
-				label: 'Foreground color',
-				id: 'fg',
+				label: 'Foreground color light',
+				id: 'fg1',
 				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Foreground color dark',
+				id: 'fg2',
+				default: self.rgb(0,0,0)
 			},
 			{
 				type: 'colorpicker',
@@ -1744,7 +3210,7 @@ instance.prototype.update_variables = function (system) {
 			{
 				type: 'colorpicker',
 				label: 'Foreground color',
-				id: 'fg',
+				id: 'fg1',
 				default: self.rgb(255,255,255)
 			},
 			{
@@ -1768,9 +3234,15 @@ instance.prototype.update_variables = function (system) {
 		options: [
 			{
 				type: 'colorpicker',
-				label: 'Foreground color',
-				id: 'fg',
+				label: 'Foreground color light',
+				id: 'fg1',
 				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Foreground color dark',
+				id: 'fg2',
+				default: self.rgb(0,0,0)
 			},
 			{
 				type: 'colorpicker',
@@ -1800,7 +3272,7 @@ instance.prototype.update_variables = function (system) {
 			{
 				type: 'colorpicker',
 				label: 'Foreground color',
-				id: 'fg',
+				id: 'fg1',
 				default: self.rgb(255,255,255)
 			},
 			{
@@ -1825,7 +3297,7 @@ instance.prototype.update_variables = function (system) {
 			{
 				type: 'colorpicker',
 				label: 'Foreground color',
-				id: 'fg',
+				id: 'fg1',
 				default: self.rgb(255,255,255)
 			},
 			{
@@ -1850,13 +3322,13 @@ instance.prototype.update_variables = function (system) {
 			{
 				type: 'colorpicker',
 				label: 'Foreground color',
-				id: 'fg',
+				id: 'fg1',
 				default: self.rgb(255,255,255)
 			},
 			{
 				type: 'colorpicker',
 				label: 'Background color',
-				id: 'bg',
+				id: 'bg1',
 				default: self.rgb(255,0,0) // Red
 			},
 			{
@@ -1880,13 +3352,13 @@ instance.prototype.update_variables = function (system) {
 			{
 				type: 'colorpicker',
 				label: 'Foreground color',
-				id: 'fg',
+				id: 'fg1',
 				default: self.rgb(255,255,255)
 			},
 			{
 				type: 'colorpicker',
 				label: 'Background color',
-				id: 'bg',
+				id: 'bg1',
 				default: self.rgb(255,0,0) // Red
 			},
 			{
@@ -1907,7 +3379,7 @@ instance.prototype.update_variables = function (system) {
 			{
 				type: 'colorpicker',
 				label: 'Foreground color',
-				id: 'fg',
+				id: 'fg1',
 				default: self.rgb(255,255,255)
 			},
 			{
@@ -1921,7 +3393,7 @@ instance.prototype.update_variables = function (system) {
 				label: 'Background color On',
 				id: 'bg2',
 				default: self.rgb(0,204,0) // Green
-			}
+			},
 		]
 	};
 
@@ -1934,31 +3406,31 @@ instance.prototype.feedback = function(feedback, bank) {
 	if (feedback.type == 'power_state') {
 		if (self.power_state === 'On') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg1
 			};
 		}
 		else if (self.power_state === 'Off') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg2
 			};
 		}
 		else if (self.power_state === 'Boot') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg2,
 				bgcolor: feedback.options.bg3
 			};
 		}
 		else if (self.power_state === 'Cool Down') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg2,
 				bgcolor: feedback.options.bg4
 			};
 		}
 		else if (self.power_state === 'Warm Up') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg2,
 				bgcolor: feedback.options.bg5
 			};
 		}
@@ -1967,13 +3439,13 @@ instance.prototype.feedback = function(feedback, bank) {
 	else if (feedback.type == 'standby') {
 		if (self.standby === 'Off') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg1
 			};
 		}
 		else if (self.standby === 'On') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg2
 			};
 		}
@@ -1982,19 +3454,19 @@ instance.prototype.feedback = function(feedback, bank) {
 	else if (feedback.type == 'signal_state') {
 		if (self.signal_state === 'Good Signal') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg1
 			};
 		}
 		else if (self.signal_state === 'Signal Missing') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg2
 			};
 		}
 		else if (self.signal_state === 'Bad Sync') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg2,
 				bgcolor: feedback.options.bg3
 			};
 		}
@@ -2003,13 +3475,13 @@ instance.prototype.feedback = function(feedback, bank) {
 	else if (feedback.type == 'osd_enabled') {
 		if (self.osd_enabled === 'Off') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg1
 			};
 		}
 		else if (self.osd_enabled === 'On') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg2
 			};
 		}
@@ -2018,13 +3490,13 @@ instance.prototype.feedback = function(feedback, bank) {
 	else if (feedback.type == 'shutter_closed') {
 		if (self.shutter_closed === 'Closed') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg1
 			};
 		}
 		else if (self.shutter_closed === 'Open') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg2
 			};
 		}
@@ -2033,17 +3505,17 @@ instance.prototype.feedback = function(feedback, bank) {
 	else 	if (feedback.type == 'input_channel') {
 		if (self.input_channel == pad3(feedback.options.input)) {
 			return {
-				color: feedback.options.fg,
-				bgcolor: feedback.options.bg
+				color: feedback.options.fg1,
+				bgcolor: feedback.options.bg1
 			};
 		}
 	}
 
 	else 	if (feedback.type == 'input_slot') {
-		if (self.input_slot.id == feedback.options.input) {
+		if (self.input_slot == feedback.options.input) {
 			return {
-				color: feedback.options.fg,
-				bgcolor: feedback.options.bg
+				color: feedback.options.fg1,
+				bgcolor: feedback.options.bg1
 			};
 		}
 	}
@@ -2051,13 +3523,13 @@ instance.prototype.feedback = function(feedback, bank) {
 	else if (feedback.type == 'pip_enabled') {
 		if (self.pip_enabled === 'Off') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg1
 			};
 		}
 		else if (self.pip_enabled === 'On') {
 			return {
-				color: feedback.options.fg,
+				color: feedback.options.fg1,
 				bgcolor: feedback.options.bg2
 			};
 		}
