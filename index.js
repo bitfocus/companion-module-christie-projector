@@ -2,7 +2,6 @@ var tcp = require('../../tcp');
 var instance_skel = require('../../instance_skel');
 var debug;
 var log;
-var cmd_debug = false; // Set to true to enable debug commands to console.
 
 function pad2(num) {
 	var s = "00" + num;
@@ -40,9 +39,10 @@ instance.prototype.updateConfig = function(config) {
 instance.prototype.init = function() {
 	var self = this;
 
-	debug = self.debug;
+	debug = self.debug;			// Normal Debug (keep uncomented as default)
+//	debug = console.log;	// Simple perminent printing of debug options to terminal/CMD
 	log = self.log;
-
+	
 	self.status(1,'Connecting'); 	// Status ok!
 	self.init_tcp();							// Init TCP
 	self.update_variables(); 			// Export Variables
@@ -82,7 +82,7 @@ instance.prototype.init_tcp = function() {
 			var msg;
 
 			// Debug recived packet
-			if (cmd_debug == true) { console.log('Packet recived: %s', data); }
+			debug('Packet recived: %s', data);
 			
 			if (data.includes('ERR')) {
 				var data2 = data.substring(data.indexOf('ERR') + 3 );
@@ -139,7 +139,7 @@ instance.prototype.init_tcp = function() {
 				self.status(self.STATE_WARNING, 'Warning');
 				self.log('warn', 'Warning ' + msg + ': ' + data);
 
-				if (cmd_debug == true) { console.log('ChristiePj: Warning %s: %s', msg, data); }
+				debug('ChristiePj: Warning %s: %s', msg, data);
 			}
 
 			if (data.includes("FYI")) { // Typical packet: '(0002FYI 001 002 003 004 "Some Message")'
@@ -163,12 +163,12 @@ instance.prototype.init_tcp = function() {
 				msg = msg.substring(0, msg.indexOf('"', 1)); 	// Saves the data between two ", with above example: 'Some Message' 
 
 				// Debugs packet and message to serial
-				if (cmd_debug == true) { console.log('FYI command recived:'); }
-				if (cmd_debug == true) { console.log(split_data[0]); }
-				if (cmd_debug == true) { console.log(split_data[1]); }
-				if (cmd_debug == true) { console.log(split_data[2]); }
-				if (cmd_debug == true) { console.log(split_data[3]); }
-				if (cmd_debug == true) { console.log(msg); }
+				debug('FYI command recived:');
+				debug('Type: %s', split_data[0]);
+				debug('P1: %s', split_data[1]);
+				debug('P2: %s', split_data[2]);
+				debug('P3: %s', split_data[3]);
+				debug('Msg: %s', msg);
 			
 				// Detect FYI Message Type
 				switch (split_data[0]) {
@@ -317,6 +317,11 @@ instance.prototype.init_tcp = function() {
 
 				msg = data.substring(data.indexOf('"') + 1);	// Saves the data after the first " with above example: 'Some Message")'
 				msg = msg.substring(0, msg.indexOf('"', 1)); 	// Saves the data between two ", with above example: 'Some Message' 
+
+				debug('LPH command recived:');
+				debug('Lamp 1: %s', split_data[0]);
+				debug('Lamp 2: %s', split_data[1]);
+				debug('Msg: %s', msg);
 
 				self.lamp_1 = split_data[0];
 				self.lamp_2 = split_data[1];
