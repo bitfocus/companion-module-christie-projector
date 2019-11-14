@@ -38,7 +38,7 @@ instance.prototype.updateConfig = function(config) {
 
 instance.prototype.init = function() {
 	var self = this;
-
+	
 	debug = self.debug;			// Normal Debug (keep uncomented as default)
 //	debug = console.log;	// Simple perminent printing of debug options to terminal/CMD
 	log = self.log;
@@ -177,16 +177,16 @@ instance.prototype.init_tcp = function() {
 						if (split_data[1] == '000') {
 							self.power_state = 'Off';				
 						} 
-						else if (split_data[1] == '001'){
+						else if (split_data[1] == '001') {
 							self.power_state = 'On';				
 						} 
-						else if (split_data[1] == '002'){
+						else if (split_data[1] == '002') {
 							self.power_state = 'Boot';				
 						} 
-						else if (split_data[1] == '010'){
+						else if (split_data[1] == '010') {
 							self.power_state = 'Cool Down';				
 						} 
-						else if (split_data[1] == '011'){
+						else if (split_data[1] == '011') {
 							self.power_state = 'Warm Up';				
 						}
 
@@ -211,7 +211,7 @@ instance.prototype.init_tcp = function() {
 						if (split_data[1] == '000') {
 							self.standby = 'Off';				
 						} 
-						else if (split_data[1] == '001'){
+						else if (split_data[1] == '001') {
 							self.standby = 'On';				
 						}
 						
@@ -224,10 +224,10 @@ instance.prototype.init_tcp = function() {
 						if (split_data[1] == '000') {
 							self.signal_state = 'Good Signal';				
 						} 
-						else if (split_data[1] == '001'){
+						else if (split_data[1] == '001') {
 							self.signal_state = 'Signal Missing';				
 						} 					
-						else if (split_data[1] == '002'){
+						else if (split_data[1] == '002') {
 							self.signal_state = 'Bad Sync';				
 						}
 						
@@ -240,7 +240,7 @@ instance.prototype.init_tcp = function() {
 						if (split_data[1] == '000') {
 							self.osd_enabled = 'Off';				
 						} 
-						else if (split_data[1] == '001'){
+						else if (split_data[1] == '001') {
 							self.osd_enabled = 'On';				
 						}
 
@@ -253,7 +253,7 @@ instance.prototype.init_tcp = function() {
 						if (split_data[1] == '000') {
 							self.shutter_closed = 'Open';				
 						}
-						else if (split_data[1] == '001'){
+						else if (split_data[1] == '001') {
 							self.shutter_closed = 'Closed';				
 						}
 
@@ -281,7 +281,7 @@ instance.prototype.init_tcp = function() {
 						if (split_data[1] == '000') {
 							self.pip_enabled = 'Off';				
 						} 
-						else if (split_data[1] == '001'){
+						else if (split_data[1] == '001') {
 							self.pip_enabled = 'On';				
 						}
 
