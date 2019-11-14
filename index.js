@@ -1881,7 +1881,7 @@ instance.prototype.init_presets = function () {
 			],
 			feedbacks: [
 				{
-					type: 'obs_enabled',
+					type: 'osd_enabled',
 					options: {
 						fg1: self.rgb(255, 255, 255),
 						bg1: self.rgb(255, 0, 0),
@@ -2090,7 +2090,7 @@ instance.prototype.init_presets = function () {
 		},
 		feedbacks: [
 			{
-				type: 'signal_state',
+				type: 'osd_enabled',
 				options: {
 					fg1: self.rgb(255, 255, 255),
 					bg1: self.rgb(255, 0, 0),
