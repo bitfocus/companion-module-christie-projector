@@ -38,11 +38,11 @@ instance.prototype.updateConfig = function(config) {
 
 instance.prototype.init = function() {
 	var self = this;
-	
+
 	debug = self.debug;			// Normal Debug (keep uncomented as default)
 //	debug = console.log;	// Simple perminent printing of debug options to terminal/CMD
 	log = self.log;
-	
+
 	self.status(1,'Connecting'); 	// Status ok!
 	self.init_tcp();							// Init TCP
 	self.update_variables(); 			// Export Variables
@@ -83,10 +83,10 @@ instance.prototype.init_tcp = function() {
 
 			// Debug recived packet
 			debug('Packet recived: %s', data);
-			
+
 			if (data.includes('ERR')) {
 				var data2 = data.substring(data.indexOf('ERR') + 3 );
-			
+
 				if (data2.includes('001')) {
 					msg = 'System Crash';
 				}
@@ -143,7 +143,7 @@ instance.prototype.init_tcp = function() {
 			}
 
 			if (data.includes("FYI")) { // Typical packet: '(0002FYI 001 002 003 004 "Some Message")'
-				var split_data = []; 
+				var split_data = [];
 				var str = data.substring(data.indexOf('FYI') + 3 ); // Striped down to: ' 001 002 003 004 "Some Message")'
 
 				var x = 0;
@@ -160,7 +160,7 @@ instance.prototype.init_tcp = function() {
 
 				// Saves FYI Message
 				msg = data.substring(data.indexOf('"') + 1);	// Saves the data after the first " with above example: 'Some Message")'
-				msg = msg.substring(0, msg.indexOf('"', 1)); 	// Saves the data between two ", with above example: 'Some Message' 
+				msg = msg.substring(0, msg.indexOf('"', 1)); 	// Saves the data between two ", with above example: 'Some Message'
 
 				// Debugs packet and message to serial
 				debug('FYI command recived:');
@@ -169,25 +169,25 @@ instance.prototype.init_tcp = function() {
 				debug('P2: %s', split_data[2]);
 				debug('P3: %s', split_data[3]);
 				debug('Msg: %s', msg);
-			
+
 				// Detect FYI Message Type
 				switch (split_data[0]) {
 
 					case '001': // Power
 						if (split_data[1] == '000') {
-							self.power_state = 'Off';				
-						} 
+							self.power_state = 'Off';
+						}
 						else if (split_data[1] == '001') {
-							self.power_state = 'On';				
-						} 
+							self.power_state = 'On';
+						}
 						else if (split_data[1] == '002') {
-							self.power_state = 'Boot';				
-						} 
+							self.power_state = 'Boot';
+						}
 						else if (split_data[1] == '010') {
-							self.power_state = 'Cool Down';				
-						} 
+							self.power_state = 'Cool Down';
+						}
 						else if (split_data[1] == '011') {
-							self.power_state = 'Warm Up';				
+							self.power_state = 'Warm Up';
 						}
 
 						self.setVariable('power_state', self.power_state);
@@ -209,12 +209,12 @@ instance.prototype.init_tcp = function() {
 
 					case '005': // Standby
 						if (split_data[1] == '000') {
-							self.standby = 'Off';				
-						} 
-						else if (split_data[1] == '001') {
-							self.standby = 'On';				
+							self.standby = 'Off';
 						}
-						
+						else if (split_data[1] == '001') {
+							self.standby = 'On';
+						}
+
 						self.setVariable('standby', self.standby);
 						self.checkFeedbacks('standby');
 						self.has_data = true;
@@ -222,15 +222,15 @@ instance.prototype.init_tcp = function() {
 
 					case '006': // Signal
 						if (split_data[1] == '000') {
-							self.signal_state = 'Good Signal';				
-						} 
-						else if (split_data[1] == '001') {
-							self.signal_state = 'Signal Missing';				
-						} 					
-						else if (split_data[1] == '002') {
-							self.signal_state = 'Bad Sync';				
+							self.signal_state = 'Good Signal';
 						}
-						
+						else if (split_data[1] == '001') {
+							self.signal_state = 'Signal Missing';
+						}
+						else if (split_data[1] == '002') {
+							self.signal_state = 'Bad Sync';
+						}
+
 						self.setVariable('signal_state', self.signal_state);
 						self.checkFeedbacks('signal_state');
 						self.has_data = true;
@@ -238,10 +238,10 @@ instance.prototype.init_tcp = function() {
 
 					case '007': // OSD
 						if (split_data[1] == '000') {
-							self.osd_enabled = 'Off';				
-						} 
+							self.osd_enabled = 'Off';
+						}
 						else if (split_data[1] == '001') {
-							self.osd_enabled = 'On';				
+							self.osd_enabled = 'On';
 						}
 
 						self.setVariable('osd_enabled', self.osd_enabled);
@@ -251,10 +251,10 @@ instance.prototype.init_tcp = function() {
 
 					case '009': // Shutter
 						if (split_data[1] == '000') {
-							self.shutter_closed = 'Open';				
+							self.shutter_closed = 'Open';
 						}
 						else if (split_data[1] == '001') {
-							self.shutter_closed = 'Closed';				
+							self.shutter_closed = 'Closed';
 						}
 
 						self.setVariable('shutter_closed', self.shutter_closed);
@@ -263,9 +263,9 @@ instance.prototype.init_tcp = function() {
 						break;
 
 					case '010': // Input
-							self.input_channel = split_data[1];				
-							self.input_slot = self.inputSelect[Number(split_data[3]) - 1].id;				
-						
+							self.input_channel = split_data[1];
+							self.input_slot = self.inputSelect[Number(split_data[3]) - 1].id;
+
 							self.setVariable('input_channel', self.input_channel);
 							self.setVariable('input_slot', self.inputSelect[Number(split_data[3])-1].label);
 							self.checkFeedbacks('input_channel');
@@ -279,10 +279,10 @@ instance.prototype.init_tcp = function() {
 
 					case '012': // PIP
 						if (split_data[1] == '000') {
-							self.pip_enabled = 'Off';				
-						} 
+							self.pip_enabled = 'Off';
+						}
 						else if (split_data[1] == '001') {
-							self.pip_enabled = 'On';				
+							self.pip_enabled = 'On';
 						}
 
 						self.setVariable('pip_enabled', self.pip_enabled);
@@ -298,12 +298,12 @@ instance.prototype.init_tcp = function() {
 						break;
 				}
 
-			}			
+			}
 
 			if (data.includes("LPH")) {
-				var split_data = []; 
+				var split_data = [];
 				var str = data.substring(data.indexOf('LPH') + 3 );
-				
+
 				var x = 0;
 				var y = 0;
 
@@ -316,7 +316,7 @@ instance.prototype.init_tcp = function() {
 				}
 
 				msg = data.substring(data.indexOf('"') + 1);	// Saves the data after the first " with above example: 'Some Message")'
-				msg = msg.substring(0, msg.indexOf('"', 1)); 	// Saves the data between two ", with above example: 'Some Message' 
+				msg = msg.substring(0, msg.indexOf('"', 1)); 	// Saves the data between two ", with above example: 'Some Message'
 
 				debug('LPH command recived:');
 				debug('Lamp 1: %s', split_data[0]);
@@ -339,7 +339,7 @@ instance.prototype.init_tcp = function() {
 				self.checkFeedbacks();
 				self.update_variables();
 			}
-						
+
 		})
 	}
 };
@@ -395,7 +395,7 @@ instance.prototype.destroy = function() {
 		self.socket.destroy();
 	}
 
-	debug("destroy", self.id);;
+	debug("destroy", self.id);
 };
 
 instance.prototype.OnOff = [
@@ -937,7 +937,7 @@ instance.prototype.init_presets = function () {
 			],
 		});
 	}
-	
+
 	// Select Color Output / Profile
 	for (var input in self.colorProfile) {
 		presets.push({
@@ -1241,7 +1241,7 @@ instance.prototype.init_presets = function () {
 		});
 	}
 
-	// Lens Center	
+	// Lens Center
 	presets.push({
 		category: 'Lens',
 		label: 'Lens Center',
@@ -1282,7 +1282,7 @@ instance.prototype.init_presets = function () {
 		});
 	}
 
-	// Zoom	
+	// Zoom
 	presets.push({
 		category: 'Lens',
 		label: 'Zoom',
@@ -1303,7 +1303,7 @@ instance.prototype.init_presets = function () {
 		],
 	});
 
-	// Focus	
+	// Focus
 	presets.push({
 		category: 'Lens',
 		label: 'Focus',
@@ -1323,7 +1323,7 @@ instance.prototype.init_presets = function () {
 			}
 		],
 	});
-	
+
 	// ###################### Lamp ######################
 
 	// Get Lamp ON Time
@@ -1389,7 +1389,7 @@ instance.prototype.init_presets = function () {
 			],
 		});
 	}
-	
+
 	// Lamp Mode
 	for (var input in self.lampMode) {
 		presets.push({
@@ -1454,7 +1454,7 @@ instance.prototype.init_presets = function () {
 			}
 		],
 	});
-	
+
 	// ###################### Input Channel ######################
 
 	// Set Input Channel
@@ -1484,7 +1484,7 @@ instance.prototype.init_presets = function () {
 						input: (i+1)
 					}
 				}
-			]			
+			]
 		});
 
 	}
@@ -1518,7 +1518,7 @@ instance.prototype.init_presets = function () {
 						input: self.inputSelect[input].id
 					}
 				}
-			]			
+			]
 		});
 
 	}
@@ -1788,7 +1788,7 @@ instance.prototype.init_presets = function () {
 			],
 		});
 	}
-		
+
 	// Power ON / OFF
 	for (var input in self.OnOff) {
 		presets.push({
@@ -1914,7 +1914,7 @@ instance.prototype.init_presets = function () {
 			],
 		});
 	}
-	
+
 	// Error Message Enable
 	for (var input in self.errorEnable) {
 		presets.push({
@@ -1937,7 +1937,7 @@ instance.prototype.init_presets = function () {
 			],
 		});
 	}
-	
+
 	// Get Lamp ON Time
 	presets.push({
 		category: 'Commands',
@@ -2076,7 +2076,7 @@ instance.prototype.init_presets = function () {
 			}
 		]
 	});
-	
+
 	// OSD State
 	presets.push({
 		category: 'Status',
@@ -2252,7 +2252,7 @@ instance.prototype.actions = function(system) {
 			]
 		},
 		'asu':  {
-			label: 'Auto Setup' 
+			label: 'Auto Setup'
 		},
 		'brt': {
 			label: 'Brightness',
@@ -2365,7 +2365,7 @@ instance.prototype.actions = function(system) {
 					choices: [
 						{ id: '', label: 'No' },
 						{ id: '111', label: 'Yes' }
-				 ]
+				]
 				}
 			]
 		},
@@ -2552,7 +2552,7 @@ instance.prototype.actions = function(system) {
 					choices: self.keypadEnableP2
 				}
 			]
-		},		
+		},
 		'key':  {
 			label: 'Key Code / Key Press',
 			options: [
@@ -2564,7 +2564,7 @@ instance.prototype.actions = function(system) {
 					choices: self.keyCode
 				}
 			]
-		},	
+		},
 		'lcb':  {
 			label: 'Lens Calibrate',
 			options: [
@@ -2578,7 +2578,7 @@ instance.prototype.actions = function(system) {
 			]
 		},
 		'lcn':  {
-			label: 'Lens Center' 
+			label: 'Lens Center'
 		},
 		'lco': {
 			label: 'Lamp Conditioning On/Off',
@@ -2884,7 +2884,7 @@ instance.prototype.action = function(action) {
 		case 'apw':
 			cmd = '(APW ' + opt.p1 + ')';
 			break;
-			
+
 		case 'aro':
 			cmd = '(ARO ' + opt.p1 + ')';
 			break;
@@ -2908,7 +2908,7 @@ instance.prototype.action = function(action) {
 		case 'cha':
 			cmd = '(CHA ' + pad2(opt.p1) + ')';
 			break;
-	
+
 		case 'cle':
 			cmd = '(CLE ' + opt.p1 + ')';
 			break;
@@ -2916,7 +2916,7 @@ instance.prototype.action = function(action) {
 		case 'clr':
 			cmd = '(CLR ' + pad4(opt.p1) + ')';
 			break;
-	
+
 		case 'con':
 			cmd = '(CON ' + pad4(opt.p1) + ')';
 			break;
@@ -2928,7 +2928,7 @@ instance.prototype.action = function(action) {
 		case 'def':
 			cmd = '(DEF ' + opt.p1 + ')';
 			break;
-	
+
 		case 'eme':
 			cmd = '(EME ' + opt.p1 + ')';
 			break;
@@ -2940,7 +2940,7 @@ instance.prototype.action = function(action) {
 		case 'fil':
 			cmd = '(FIL ' + opt.p1 + ')';
 			break;
-	
+
 		case 'frz':
 			cmd = '(FRZ ' + opt.p1 + ')';
 			break;
@@ -2964,7 +2964,7 @@ instance.prototype.action = function(action) {
 		case 'itpBasic':
 			cmd = '(ITP ' + opt.p1 + ')';
 			break;
-	
+
 		case 'itpBoxer':
 			cmd = '(ITP ' + opt.p1 + ')';
 			break;
@@ -2984,7 +2984,7 @@ instance.prototype.action = function(action) {
 		case 'lcb':
 			cmd = '(LCB ' + opt.p1 + ')';
 			break;
-	
+
 		case 'lcn':
 			cmd = '(LCN)';
 			break;
@@ -2992,7 +2992,7 @@ instance.prototype.action = function(action) {
 		case 'lco':
 			cmd = '(LCO ' + opt.p1 + ')';
 			break;
-	
+
 		case 'lng':
 			cmd = '(LNG ' + opt.p1 + ')';
 			break;
@@ -3008,7 +3008,7 @@ instance.prototype.action = function(action) {
 		case 'lph':
 			cmd = '(LPH?)';
 			break;
-	
+
 
 		case 'lpi':
 			cmd = '(LPI ' + pad4(opt.p1) +')';
@@ -3037,11 +3037,11 @@ instance.prototype.action = function(action) {
 		case 'pps':
 			cmd = '(PPS)';
 			break;
-		
+
 		case 'pwr':
 			cmd = '(PWR ' + opt.p1 + ')';
 			break;
-		
+
 		case 'sde':
 			cmd = '(SDE ' + opt.p1 +')';
 			break;
@@ -3057,27 +3057,27 @@ instance.prototype.action = function(action) {
 		case 'sor':
 			cmd = '(SOR ' + opt.p1 +')';
 			break;
-		
+
 		case 'std':
 			cmd = '(STD ' + opt.p1 +')';
 			break;
-		
+
 		case 'szp':
 			cmd = '(SZP ' + opt.p1 +')';
 			break;
-		
+
 		case 'tnt':
 			cmd = '(TNT ' + opt.p1 +')';
 			break;
-		
+
 		case 'vrt':
 			cmd = '(VRT ' + opt.p1 +')';
 			break;
-		
+
 		case 'wps':
 			cmd = '(WPS ' + opt.p1 + ')';
 			break;
-		
+
 		case 'wrp':
 			cmd = '(WRP+SLCT ' + opt.p1 + ')';
 			break;
@@ -3085,11 +3085,11 @@ instance.prototype.action = function(action) {
 		case 'zom':
 			cmd = '(ZOM ' + pad4(opt.p1) + ')';
 			break;
-	
+
 		//TODO make input select need to fetch the available input configurations from the projector
 
 
-	};
+	}
 
 	if (cmd !== undefined) {
 
@@ -3459,7 +3459,7 @@ instance.prototype.feedback = function(feedback, bank) {
 				bgcolor: feedback.options.bg5
 			};
 		}
-	}	
+	}
 
 	else if (feedback.type == 'standby') {
 		if (self.standby === 'Off') {
