@@ -1,8 +1,5 @@
 # companion-module-christiepj
-
-Module to conntrol various Christie projectors
-For more info take a look at the file: "Help.md"
-Documentation can be found at: http://www.qed-productions.com/downloads/christie/serial-communications.pdf
+See HELP.md and LICENSE
 
 **V1.0.0**
 * Initial Module
