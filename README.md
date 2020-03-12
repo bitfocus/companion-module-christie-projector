@@ -1,4 +1,4 @@
-# companion-module-christiepj
+# companion-module-christie-projector
 See HELP.md and LICENSE
 
 **V1.0.0**
