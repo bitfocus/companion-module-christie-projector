@@ -4,22 +4,22 @@ var debug;
 var log;
 
 function pad2(num) {
-	var s = "00" + num;
+	let s = "00" + num;
 	return s.substr(s.length-2);
 }
 
 function pad3(num) {
-	var s = "000" + num;
+	let s = "000" + num;
 	return s.substr(s.length-3);
 }
 
 function pad4(num) {
-	var s = "0000" + num;
+	let s = "0000" + num;
 	return s.substr(s.length-4);
 }
 
 function instance(system, id, config) {
-	var self = this;
+	let self = this;
 
 	// super-constructor
 	instance_skel.apply(this, arguments);
@@ -29,29 +29,33 @@ function instance(system, id, config) {
 	return self;
 }
 
+instance.prototype.INTERVAL = null; //used for polling device
+
 instance.prototype.updateConfig = function(config) {
-	var self = this;
+	let self = this;
 
 	self.config = config;
 	self.init_tcp();
+	self.setupInterval();
 };
 
 instance.prototype.init = function() {
-	var self = this;
+	let self = this;
 
 	debug = self.debug;			// Normal Debug (keep uncomented as default)
-//	debug = console.log;	// Simple perminent printing of debug options to terminal/CMD
+	debug = console.log;	// Simple perminent printing of debug options to terminal/CMD
 	log = self.log;
 
 	self.status(1,'Connecting'); 	// Status ok!
 	self.init_tcp();							// Init TCP
+	self.setupInterval();
 	self.update_variables(); 			// Export Variables
 	self.checkFeedbacks();				// Export Feedbacks
 	self.init_presets();					// Export Presets
 };
 
 instance.prototype.init_tcp = function() {
-	var self = this;
+	let self = this;
 
 	if (self.socket !== undefined) {
 		self.socket.destroy();
@@ -74,18 +78,103 @@ instance.prototype.init_tcp = function() {
 		self.socket.on('connect', function () {
 			self.status(self.STATE_OK);
 			debug("Connected");
+			self.getData();
 		})
 
 		self.socket.on('data', function (d) {
-			var oldHasData = self.has_data = true;
-			var data = String(d);
-			var msg;
+			let oldHasData = self.has_data = true;
+			let data = String(d);
+			let msg;
 
 			// Debug recived packet
-			debug('Packet recived: %s', data);
+			debug('Packet received: %s', data);
+
+			try {
+				let data_split = data.split(')');
+
+				for (let i = 0; i < data_split.length; i++) {
+					let data_string = data_split[i].replace('(', '').replace(')', ''); //remove paraentheses
+
+					if (data_string !== '"') {
+						//debug('Received: %s', data_string);
+
+						if (data_string !== '') {
+							let data_cmd;
+							let data_cmd_info;
+							if (data_string.indexOf(' ') > -1) {
+								data_cmd = data_string.slice(0, data_string.indexOf(' ')); //get the first part before the first space
+								data_cmd_info = data_string.slice(data_string.indexOf(' ') + 1) //get the rest
+							}
+							else {
+								data_cmd = data_string;
+							}
+
+							debug('data_cmd: %s', data_cmd);
+
+							let data_cmd_parts = data_cmd.split('!');
+							let data_cmd_function = data_cmd_parts[0]; // SHU
+							let data_cmd_param = data_cmd_parts[1]; // 000
+
+							debug('Data Function: %s', data_cmd_function);
+							debug('Data Parameter: %s', data_cmd_param);
+							debug('Data Info: %s', data_cmd_info);
+
+							let data_cmd_param_int = parseInt(data_cmd_param);
+
+							if (data_cmd_function === 'SHU') {
+								//shutter status
+								switch(data_cmd_param_int) {
+									case 0:
+										self.shutter_closed = 'Open';
+										break;
+									case 1:
+										self.shutter_closed = 'Closed';
+										break;
+									default:
+										self.shutter_closed = '';
+										break;
+								}
+								self.setVariable('shutter_closed', self.shutter_closed);
+								self.checkFeedbacks('shutter_closed');
+							}
+
+							if (data_cmd_function === 'PWR') {
+								//projector power status
+								switch(data_cmd_param_int) {
+									case 0:
+									case 10:
+									case 20:
+									case 21:
+									case 22:
+									case 23:
+										self.power_state = 'Off';
+										break;
+									case 01:
+									case 11:
+										self.power_state = 'On';
+										break;
+									default:
+										self.power_state = '';
+										break;
+								}
+								self.setVariable('power_state', self.power_state);
+								self.checkFeedbacks('power_state');
+							}
+
+							if (data_cmd_function === 'SST+CONF') {
+								//model, serial, etc. info
+							}
+						}
+					}
+				}
+			}
+			catch(error) {
+				debug('Error processing data: %s', error);
+			}
+
 
 			if (data.includes('ERR')) {
-				var data2 = data.substring(data.indexOf('ERR') + 3 );
+				let data2 = data.substring(data.indexOf('ERR') + 3 );
 
 				if (data2.includes('001')) {
 					msg = 'System Crash';
@@ -143,11 +232,11 @@ instance.prototype.init_tcp = function() {
 			}
 
 			if (data.includes("FYI")) { // Typical packet: '(0002FYI 001 002 003 004 "Some Message")'
-				var split_data = [];
-				var str = data.substring(data.indexOf('FYI') + 3 ); // Striped down to: ' 001 002 003 004 "Some Message")'
+				let split_data = [];
+				let str = data.substring(data.indexOf('FYI') + 3 ); // Striped down to: ' 001 002 003 004 "Some Message")'
 
-				var x = 0;
-				var y = 0;
+				let x = 0;
+				let y = 0;
 
 				// Saves FYI Command
 				for (let i = 0; i < 4; i++) { 	// Striped down to: ' 001 002 003 004 "Some Message")'
@@ -163,7 +252,7 @@ instance.prototype.init_tcp = function() {
 				msg = msg.substring(0, msg.indexOf('"', 1)); 	// Saves the data between two ", with above example: 'Some Message'
 
 				// Debugs packet and message to serial
-				debug('FYI command recived:');
+				debug('FYI command received:');
 				debug('Type: %s', split_data[0]);
 				debug('P1: %s', split_data[1]);
 				debug('P2: %s', split_data[2]);
@@ -301,11 +390,11 @@ instance.prototype.init_tcp = function() {
 			}
 
 			if (data.includes("LPH")) {
-				var split_data = [];
-				var str = data.substring(data.indexOf('LPH') + 3 );
+				let split_data = [];
+				let str = data.substring(data.indexOf('LPH') + 3 );
 
-				var x = 0;
-				var y = 0;
+				let x = 0;
+				let y = 0;
 
 				for (let i = 0; i < 4; i++) { 	// Striped down to: ' 001 002 003 004 "Some Message")'
 					x = str.indexOf(' ') + 1; 		// Get first " "
@@ -344,17 +433,34 @@ instance.prototype.init_tcp = function() {
 	}
 };
 
+instance.prototype.getData = function () {
+	let self = this;
+
+	//if you don't separate the command requests by at least 150ms, some projectors don't like it and won't respond
+
+	setTimeout(self.getCommand.bind(self), 50, 'PWR');
+	setTimeout(self.getCommand.bind(self), 200, 'SHU');
+};
+
+instance.prototype.getCommand = function(command) {
+	let self = this;
+
+	debug('Sending: ' + command);
+
+	self.socket.send('(' + command + '?)');
+};
+
 
 // Return config fields for web config
 instance.prototype.config_fields = function () {
-	var self = this;
+	let self = this;
 	return [
 		{
 			type: 'text',
 			id: 'info',
 			width: 12,
 			label: 'Information',
-			value: 'This module controls Christie projectors,input selection will be added later since we need to fetch the input port information from the projector.'
+			value: 'This module controls Christie projectors.'
 		},
 		{
 			type: 'textinput',
@@ -370,6 +476,20 @@ instance.prototype.config_fields = function () {
 			width: 6,
 			default: '3002',
 			regex: self.REGEX_PORT
+		},
+		{
+			type: 'text',
+			id: 'intervalInfo',
+			width: 12,
+			label: 'Update Interval',
+			value: 'Please enter the amount of time in milliseconds to request new information from the projector. Set to 0 to disable.',
+		},
+		{
+			type: 'textinput',
+			id: 'interval',
+			label: 'Update Interval',
+			width: 3,
+			default: 5000
 		}
 		/*
 		TODO this will be used to limit / selct the options acording to the projector series in use, need to find a event to trigger the assignments
@@ -387,12 +507,34 @@ instance.prototype.config_fields = function () {
 	]
 };
 
+instance.prototype.setupInterval = function() {
+	let self = this;
+
+	if (self.INTERVAL !== null) {
+		clearInterval(self.INTERVAL);
+		self.INTERVAL = null;
+	}
+
+	if (!self.config.interval) {
+		self.config.interval = 0;
+	}
+
+	if (self.config.interval > 0) {
+		self.INTERVAL = setInterval(self.getData.bind(self), self.config.interval);
+	}
+};
+
 // When module gets deleted
 instance.prototype.destroy = function() {
-	var self = this;
+	let self = this;
 
 	if (self.socket !== undefined) {
 		self.socket.destroy();
+	}
+
+	if (self.INTERVAL) {
+		clearInterval(self.INTERVAL);
+		self.INTERVAL = null;
 	}
 
 	debug("destroy", self.id);
@@ -708,15 +850,15 @@ instance.prototype.warpSelMseries = [
 ];
 
 instance.prototype.init_presets = function () {
-	var self = this;
-	var presets = [];
-	var pstSize = '18';
+	let self = this;
+	let presets = [];
+	let pstSize = '18';
 
 	// ###################### Auto Source ######################
 
 	// Auto Source ON / OFF
-	for (var input = 0; input < 50; input++) {
-		for (var input2 in self.OnOff) {
+	for (let input = 0; input < 50; input++) {
+		for (let input2 in self.OnOff) {
 			presets.push({
 				category: 'Auto Source',
 				label: ' Auto Source ' + (input+1) + ' ' + self.OnOff[input2].label,
@@ -743,7 +885,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Brightness ######################
 
 	// Brightness Set 0-100%
-	for (var input = 0; input < 11; input++) {
+	for (let input = 0; input < 11; input++) {
 		presets.push({
 			category: 'Brightness',
 			label: 'Brightness Set ' + (input*10) + '%',
@@ -768,7 +910,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Constrast ######################
 
 	// Contrast Set 0-100%
-	for (var input = 0; input < 11; input++) {
+	for (let input = 0; input < 11; input++) {
 		presets.push({
 			category: 'Contrast',
 			label: 'Contrast Set ' + (input*10) + '%',
@@ -793,7 +935,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Color ######################
 
 	// Color Set 0-100%
-	for (var input = 0; input < 11; input++) {
+	for (let input = 0; input < 11; input++) {
 		presets.push({
 			category: 'Color',
 			label: 'Color Set ' + (input*10) + '%',
@@ -818,7 +960,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Tint ######################
 
 	// Tint Set 0-100%
-	for (var input = 0; input < 11; input++) {
+	for (let input = 0; input < 11; input++) {
 		presets.push({
 			category: 'Tint',
 			label: 'Tint Set ' + (input*10) + '%',
@@ -843,7 +985,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Gamma ######################
 
 	// Gamma Set 100-280 = 1.8-2.0
-	for (var input = 0; input < 19; input++) {
+	for (let input = 0; input < 19; input++) {
 		presets.push({
 			category: 'Gamma',
 			label: 'Gamma Set ' + (input*10+100),
@@ -868,7 +1010,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Motion Filter ######################
 
 	// Motion Filter
-	for (var input in self.motionFilter) {
+	for (let input in self.motionFilter) {
 		presets.push({
 			category: 'Motion Filter',
 			label: 'Motion Filter ' + self.motionFilter[input].label,
@@ -893,7 +1035,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Picture / Image ######################
 
 	// Aspect Ratio Overlay ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'Image',
 			label: 'Aspect Ratio Overlay ' + self.OnOff[input].label,
@@ -916,7 +1058,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Freeze Image ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'Image',
 			label: 'Freeze Image ' + self.OnOff[input].label,
@@ -939,7 +1081,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Select Color Output / Profile
-	for (var input in self.colorProfile) {
+	for (let input in self.colorProfile) {
 		presets.push({
 			category: 'Image',
 			label: 'Select Color Output/Profile ' + self.colorProfile[input].label,
@@ -962,7 +1104,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Color Space
-	for (var input in self.colorSpace) {
+	for (let input in self.colorSpace) {
 		presets.push({
 			category: 'Image',
 			label: 'Color Space ' + self.colorSpace[input].label,
@@ -985,7 +1127,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Color Enable
-	for (var input in self.colorName) {
+	for (let input in self.colorName) {
 		presets.push({
 			category: 'Image',
 			label: 'Color Enable ' + self.colorName[input].label,
@@ -1008,7 +1150,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Input Filter
-	for (var input in self.inputFilter) {
+	for (let input in self.inputFilter) {
 		presets.push({
 			category: 'Image',
 			label: 'Input Filter ' + self.inputFilter[input].label,
@@ -1031,7 +1173,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Image Optimazation
-	for (var input in self.imageOpti) {
+	for (let input in self.imageOpti) {
 		presets.push({
 			category: 'Image',
 			label: 'Image Optimazation ' + self.imageOpti[input].label,
@@ -1098,7 +1240,7 @@ instance.prototype.init_presets = function () {
 	});
 
 	// Screen Orientation
-	for (var input in self.selectOri) {
+	for (let input in self.selectOri) {
 		presets.push({
 			category: 'Position',
 			label: 'Screen Orientation ' + self.selectOri[input].label,
@@ -1121,7 +1263,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Screen Size Preset
-	for (var input in self.size) {
+	for (let input in self.size) {
 		presets.push({
 			category: 'Position',
 			label: 'Screen Size Preset ' + self.size[input].label,
@@ -1146,7 +1288,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Warp Select (Basic) ######################
 
 	// Warp Select (Basic)
-	for (var input in self.warpSelBasic) {
+	for (let input in self.warpSelBasic) {
 		presets.push({
 			category: 'Warp Select (Basic)',
 			label: 'Warp Select (Basic) ' + self.warpSelBasic[input].label,
@@ -1171,7 +1313,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Warp Select (M-series/Boxer) ######################
 
 	// Warp Select (M-series/Boxer)
-	for (var input in self.warpSelMseries) {
+	for (let input in self.warpSelMseries) {
 		presets.push({
 			category: 'Warp Select (M-Serise)',
 			label: 'Warp Select (M-series/Boxer) ' + self.warpSelMseries[input].label,
@@ -1196,7 +1338,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Lens ######################
 
 	// Automatic Lens Calibration ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'Lens',
 			label: 'Automatic Lens Calibration ' + self.OnOff[input].label,
@@ -1219,7 +1361,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Lens Calibrate
-	for (var input in self.lensCal) {
+	for (let input in self.lensCal) {
 		presets.push({
 			category: 'Lens',
 			label: 'Lens Calibrate ' + self.lensCal[input].label,
@@ -1260,7 +1402,7 @@ instance.prototype.init_presets = function () {
 	});
 
 	// Intelligent Lens System ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'Lens',
 			label: 'Intelligent Lens System ' + self.OnOff[input].label,
@@ -1345,7 +1487,7 @@ instance.prototype.init_presets = function () {
 	});
 
 	// Lamp Conditioning ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'Lamp',
 			label: 'Lamp Conditioning ' + self.OnOff[input].label,
@@ -1368,7 +1510,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Lamp Operation
-	for (var input in self.lampOp) {
+	for (let input in self.lampOp) {
 		presets.push({
 			category: 'Lamp',
 			label: 'Lamp Operation ' + self.lampOp[input].label,
@@ -1391,7 +1533,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Lamp Mode
-	for (var input in self.lampMode) {
+	for (let input in self.lampMode) {
 		presets.push({
 			category: 'Lamp',
 			label: 'Lamp Mode ' + self.lampMode[input].label,
@@ -1492,7 +1634,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Input Slot ######################
 
 	// Set Input Slot
-	for (var input in self.inputSelect) {
+	for (let input in self.inputSelect) {
 		presets.push({
 			category: 'Input Slot',
 			label: 'Slot ' + self.inputSelect[input].label,
@@ -1526,7 +1668,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Internal Test Pattern (General/Basic) ######################
 
 	// Internal Test Pattern (General/Basic)
-	for (var input in self.tpatBasic) {
+	for (let input in self.tpatBasic) {
 		presets.push({
 			category: 'Test Pattern (Basic)',
 			label: 'Internal Test Pattern (General/Basic) ' + self.tpatBasic[input].label,
@@ -1549,7 +1691,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Internal Test Pattern (Boxer) ######################
 
 	// Internal Test Pattern (Boxer)
-	for (var input in self.tpatBoxer) {
+	for (let input in self.tpatBoxer) {
 		presets.push({
 			category: 'Test Pattern (Boxer)',
 			label: 'Internal Test Pattern (Boxer) ' + self.tpatBoxer[input].label,
@@ -1572,7 +1714,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Internal Test Pattern (M-Series) ######################
 
 	// Internal Test Pattern (Boxer)
-	for (var input in self.tpatMser) {
+	for (let input in self.tpatMser) {
 		presets.push({
 			category: 'Test Pattern (M-Series)',
 			label: 'Internal Test Pattern (M-Series) ' + self.tpatMser[input].label,
@@ -1595,7 +1737,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Picture-In-Picture ######################
 
 	// PIP ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'PIP',
 			label: 'Picture In Picture ' + self.OnOff[input].label,
@@ -1646,7 +1788,7 @@ instance.prototype.init_presets = function () {
 	});
 
 	// PIP Preset
-	for (var input in self.pipPreset) {
+	for (let input in self.pipPreset) {
 		presets.push({
 			category: 'PIP',
 			label: 'Picture In Picture Preset' + self.pipPreset[input].label,
@@ -1671,8 +1813,8 @@ instance.prototype.init_presets = function () {
 	// ###################### Key Pad ######################
 
 	// Keypad Enable
-	for (var input in self.keypadEnableP1) {
-		for (var input2 in self.keypadEnableP2) {
+	for (let input in self.keypadEnableP1) {
+		for (let input2 in self.keypadEnableP2) {
 			presets.push({
 				category: 'Keypad ' + self.keypadEnableP1[input].label,
 				label: self.keypadEnableP1[input].label + ' ' + self.keypadEnableP2[input2].label,
@@ -1699,7 +1841,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Key Codes ######################
 
 	// Key Code
-	for (var input in self.keyCode) {
+	for (let input in self.keyCode) {
 		presets.push({
 			category: 'Key Codes',
 			label: 'Key Code:' + self.keyCode[input].label,
@@ -1724,7 +1866,7 @@ instance.prototype.init_presets = function () {
 	// ###################### Language ######################
 
 	// Set Language
-	for (var input in self.language) {
+	for (let input in self.language) {
 		presets.push({
 			category: 'Language',
 			label: 'Set Language:' + self.language[input].label,
@@ -1767,7 +1909,7 @@ instance.prototype.init_presets = function () {
 		});
 
 	// Auto Power Up ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'Commands',
 			label: 'Auto Power Up ' + self.OnOff[input].label,
@@ -1790,7 +1932,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Power ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'Commands',
 			label: 'Power ' + self.OnOff[input].label,
@@ -1827,7 +1969,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Shutter Open / Close
-	for (var input in self.shutter) {
+	for (let input in self.shutter) {
 		presets.push({
 			category: 'Commands',
 			label: 'Shutter ' + self.shutter[input].label,
@@ -1860,7 +2002,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// OSD ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'Commands',
 			label: 'On Screen Display ' + self.OnOff[input].label,
@@ -1893,7 +2035,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Source Dialog Enable ON / OFF
-	for (var input in self.OnOff) {
+	for (let input in self.OnOff) {
 		presets.push({
 			category: 'Commands',
 			label: 'Source Dialog Enable ' + self.OnOff[input].label,
@@ -1916,7 +2058,7 @@ instance.prototype.init_presets = function () {
 	}
 
 	// Error Message Enable
-	for (var input in self.errorEnable) {
+	for (let input in self.errorEnable) {
 		presets.push({
 			category: 'Commands',
 			label: 'Error Message Enable ' + self.errorEnable[input].label,
@@ -2189,7 +2331,7 @@ instance.prototype.init_presets = function () {
 };
 
 instance.prototype.actions = function(system) {
-	var self = this;
+	let self = this;
 
 	self.system.emit('instance_actions', self.id, {
 		'alc': {
@@ -2872,9 +3014,9 @@ instance.prototype.actions = function(system) {
 };
 
 instance.prototype.action = function(action) {
-	var self = this;
-	var opt = action.options
-	var cmd
+	let self = this;
+	let opt = action.options
+	let cmd
 
 	switch (action.action) {
 		case 'alc':
@@ -3097,6 +3239,7 @@ instance.prototype.action = function(action) {
 
 		if (self.socket !== undefined && self.socket.connected) {
 			self.socket.send(cmd);
+			self.getData();
 			self.status(self.STATE_OK);
 		}
 		else {
@@ -3105,13 +3248,13 @@ instance.prototype.action = function(action) {
 
 	}
 
-	// debug('action():', action);
+	 debug('action():', action);
 
 };
 
 instance.prototype.update_variables = function (system) {
-	var self = this;
-	var variables = [];
+	let self = this;
+	let variables = [];
 
 	variables.push({
 		label: 'Total Hours On Lamp 1',
@@ -3177,7 +3320,7 @@ instance.prototype.update_variables = function (system) {
 	self.setVariableDefinitions(variables);
 
 	// feedbacks
-	var feedbacks = {};
+	let feedbacks = {};
 
 	feedbacks['power_state'] = {
 		label: 'Power State',
@@ -3426,7 +3569,7 @@ instance.prototype.update_variables = function (system) {
 };
 
 instance.prototype.feedback = function(feedback, bank) {
-	var self = this;
+	let self = this;
 
 	if (feedback.type == 'power_state') {
 		if (self.power_state === 'On') {

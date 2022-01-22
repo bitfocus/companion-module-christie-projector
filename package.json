@@ -3,7 +3,7 @@
 	"legacy": [
 		"christiepj"
 	],
-	"version": "2.0.3",
+	"version": "2.0.4",
 	"api_version": "1.0.0",
 	"keywords": ["Projectors"],
 	"manufacturer": "Christie",
@@ -15,6 +15,10 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"author": "Per Røine <per.roine@gmail.com> & Andreas Thomsen <mc-hauge@hotmail.com>",
+	"author": "Per Røine <per.roine@gmail.com>",
+	"contributors": [
+		"Andreas Thomsen <mc-hauge@hotmail.com>",
+		"Joseph Adams <josephdadams@gmail.com>"
+	],
 	"license": "MIT"
 }

@@ -73,9 +73,10 @@ Module to conntrol various Christie projectors
 **Supported Feedback**
 * (ERR) Error Message (Feedback)
 * (FYI) For Your Information (Feedback)
-* (LPH) Lamp Hours Of Use (Feedback kinda, needs vertification)
+* (LPH) Lamp Hours Of Use (Feedback kinda, needs verification)
+* (PWR) Projector Is On/Off
+* (SHU) Shutter is Open/Closed
 
-
-**Not implementet Yet**
+**Not Implemented Yet**
 * (HIS) Lamp History (Feedback)
 * (LHO) Lens Horizontal Offset (start and stop commands?)

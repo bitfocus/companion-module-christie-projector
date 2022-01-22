@@ -22,3 +22,6 @@ See HELP.md and LICENSE
 
 **V2.0.3**
 * Presets for nearly all commands
+
+**V2.0.4**
+* Working Feedbacks for Shutter and Power State of certain models
