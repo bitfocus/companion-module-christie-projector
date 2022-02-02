@@ -3,9 +3,11 @@
 	"legacy": [
 		"christiepj"
 	],
-	"version": "2.0.4",
+	"version": "2.0.5",
 	"api_version": "1.0.0",
-	"keywords": ["Projectors"],
+	"keywords": [
+		"Projectors"
+	],
 	"manufacturer": "Christie",
 	"product": "Projector",
 	"shortname": "ChristiePj",
