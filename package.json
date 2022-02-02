@@ -11,7 +11,7 @@
 	"manufacturer": "Christie",
 	"product": "Projector",
 	"shortname": "ChristiePj",
-	"homepage": "https://www.christiedigital.com/en-us/business/products/projectors",
+	"homepage": "https://github.com/bitfocus/companion-module-christie-projector#readme",
 	"description": "Module to conntrol various Christie projectors",
 	"main": "index.js",
 	"scripts": {
@@ -22,5 +22,12 @@
 		"Andreas Thomsen <mc-hauge@hotmail.com>",
 		"Joseph Adams <josephdadams@gmail.com>"
 	],
-	"license": "MIT"
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-christie-projector/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-christie-projector.git"
+	}
 }
