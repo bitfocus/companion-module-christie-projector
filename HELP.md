@@ -1,10 +1,10 @@
 ## Christie Projectors
 
-Module to conntrol various Christie projectors
+Module to control various Christie projectors
 
 (Be aware not all units support all commands)
 
-**Suppoted Models:**
+**Supported Models:**
 * Roadie 25K/Roadie HD+30K/Roadie HD+35K
 * Roadster (all)
 * Mirage (all)
@@ -46,12 +46,14 @@ Module to conntrol various Christie projectors
 * (LCB) Lens Calibrate
 * (LCN) Lens Center
 * (LCO) Lamp Conditioning
+* (LHO) Lens Horizontal Offset
 * (LNG) Language
 * (LOP) Lamp Operation
 * (LPC) Lamp Changed (Max 8 Character Serial)
 * (LPH) Lamp Hours Of Use
 * (LPI) Lamp Intensity
 * (LPM) Lamp Mode
+* (LVO) Lens Vertical Offset
 * (MOT) Motion Filter
 * (OSD) On Screen Display
 * (PIP) Picture In Picture
@@ -79,4 +81,3 @@ Module to conntrol various Christie projectors
 
 **Not Implemented Yet**
 * (HIS) Lamp History (Feedback)
-* (LHO) Lens Horizontal Offset (start and stop commands?)

@@ -25,3 +25,7 @@ See HELP.md and LICENSE
 
 **V2.0.4**
 * Working Feedbacks for Shutter and Power State of certain models
+
+**V3.0.0**
+* Module refactored for easier maintenance
+* Added lens shift/motor position control for J-Series projectors, with Presets
