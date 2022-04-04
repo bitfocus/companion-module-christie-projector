@@ -36,8 +36,8 @@ instance.prototype.pip_enabled = '';
 
 instance.prototype.motorposition_h = '';
 instance.prototype.motorposition_v = '';
-instance.prototype.motorposition_f = '';
 instance.prototype.motorposition_z = '';
+instance.prototype.motorposition_f = '';
 
 instance.prototype.init = function() {
 	let self = this;
@@ -141,7 +141,10 @@ instance.prototype.setupInterval = function() {
 		self.config.interval = 0;
 	}
 
+	self.config.interval = parseInt(self.config.interval);
+
 	if (self.config.interval > 0) {
+		self.log('info', `Starting Update Interval. Updating every ${self.config.interval}ms`);
 		self.INTERVAL = setInterval(self.getData.bind(self), self.config.interval);
 	}
 };
@@ -322,11 +325,26 @@ instance.prototype.init_tcp = function() {
 
 							if (data_cmd_function === 'LVO') {
 								//lens shift position info
-								console.log(data_string);
-								self.setVariable('motorposition_h', self.motorposition_h);
+								self.motorposition_v = data_cmd_param;
 								self.setVariable('motorposition_v', self.motorposition_v);
-								self.setVariable('motorposition_f', self.motorposition_f);
+							}
+
+							if (data_cmd_function === 'LHO') {
+								//lens shift position info
+								self.motorposition_h = data_cmd_param;
+								self.setVariable('motorposition_h', self.motorposition_h);
+							}
+
+							if (data_cmd_function === 'ZOM') {
+								//lens shift position info
+								self.motorposition_z = data_cmd_param;
 								self.setVariable('motorposition_z', self.motorposition_z);
+							}
+
+							if (data_cmd_function === 'FCS') {
+								//lens shift position info
+								self.motorposition_f = data_cmd_param;
+								self.setVariable('motorposition_f', self.motorposition_f);
 							}
 						}
 					}
@@ -391,6 +409,8 @@ instance.prototype.init_tcp = function() {
 				debug("Network Warning", data);
 				self.status(self.STATE_WARNING, 'Warning');
 				self.log('warn', 'Warning ' + msg + ': ' + data);
+
+				setTimeout(clearWarning.bind(self), 5000);
 
 				debug('ChristiePj: Warning %s: %s', msg, data);
 			}
@@ -596,6 +616,12 @@ instance.prototype.init_tcp = function() {
 	}
 };
 
+instance.prototype.clearWarning = function() {
+	let self = this;
+
+	self.status(self.STATE_OK);
+}
+
 instance.prototype.getData = function () {
 	let self = this;
 
@@ -604,6 +630,9 @@ instance.prototype.getData = function () {
 	setTimeout(self.getCommand.bind(self), 50, 'PWR');
 	setTimeout(self.getCommand.bind(self), 200, 'SHU');
 	setTimeout(self.getCommand.bind(self), 400, 'LVO');
+	setTimeout(self.getCommand.bind(self), 650, 'LHO');
+	setTimeout(self.getCommand.bind(self), 800, 'ZOM');
+	setTimeout(self.getCommand.bind(self), 950, 'FCS');
 };
 
 instance.prototype.getCommand = function(command) {
@@ -649,7 +678,7 @@ instance.prototype.sendCommand = function(cmd) {
 	let self = this;
 
 	if (cmd !== undefined) {
-		debug('Sending: ' + command);
+		debug('Sending: ' + cmd);
 		if (self.socket !== undefined && self.socket.connected) {
 			self.socket.send(cmd);
 		}

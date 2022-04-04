@@ -289,10 +289,10 @@ module.exports = {
 				{
 					type: 'number',
 					id: 'p1',
-					label: 'Focus Set (0-9999)',
-					min: 0,
-					max: 9999,
-					default: 4000,
+					label: 'Focus Set (-1200 to 1200)',
+					min: -1200,
+					max: 1200,
+					default: 0,
 					required: true,
 					range: false,
 					regex: self.REGEX_NUMBER
@@ -981,10 +981,10 @@ module.exports = {
 				{
 					type: 'number',
 					id: 'p1',
-					label: 'Zoom Set (0-9999)',
-					min: 0,
-					max: 9999,
-					default: 5000,
+					label: 'Zoom Set (-1200 to 1200)',
+					min: -1200,
+					max: 1200,
+					default: 0,
 					required: true,
 					range: false,
 					regex: self.REGEX_NUMBER
@@ -1027,10 +1027,10 @@ module.exports = {
 				{
 					type: 'number',
 					id: 'pos',
-					label: 'Position',
-					min: 0,
-					max: 9999,
-					default: 5000,
+					label: 'Position (-2050 to 2050)',
+					min: -2050,
+					max: 2050,
+					default: 0,
 					required: true,
 					range: false,
 					regex: self.REGEX_NUMBER
@@ -1038,8 +1038,7 @@ module.exports = {
 			],
 			callback: function(action, bank) {
 				let opt = action.options;
-				let pos = opt.pos;
-				let cmd = '(LHO ' + pos + ')';
+				let cmd = '(LHO ' + util.pad4(opt.pos) + ')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -1074,10 +1073,10 @@ module.exports = {
 				{
 					type: 'number',
 					id: 'pos',
-					label: 'Position',
-					min: 0,
-					max: 9999,
-					default: 5000,
+					label: 'Position (-2050 to 2050)',
+					min: -2050,
+					max: 2050,
+					default: 0,
 					required: true,
 					range: false,
 					regex: self.REGEX_NUMBER
@@ -1085,8 +1084,7 @@ module.exports = {
 			],
 			callback: function(action, bank) {
 				let opt = action.options;
-				let pos = opt.pos;
-				let cmd = '(LVO ' + pos + ')';
+				let cmd = '(LVO ' + util.pad4(opt.pos) + ')';
 				self.sendCommand(cmd);
 			}
 		}

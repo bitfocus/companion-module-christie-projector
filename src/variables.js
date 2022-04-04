@@ -19,8 +19,8 @@ module.exports = {
 
 		variables.push({ label: 'Motor Position - Horizontal', name: 'motorposition_h' });
 		variables.push({ label: 'Motor Position - Vertical', name: 'motorposition_v' });
-		variables.push({ label: 'Motor Position - Focus', name: 'motorposition_f' });
 		variables.push({ label: 'Motor Position - Zoom', name: 'motorposition_z' });
+		variables.push({ label: 'Motor Position - Focus', name: 'motorposition_f' });
 
 		return variables
 	},
@@ -45,8 +45,8 @@ module.exports = {
 
 			self.setVariable('motorposition_h', self.motorposition_h);
 			self.setVariable('motorposition_v', self.motorposition_v);
-			self.setVariable('motorposition_f', self.motorposition_f);
 			self.setVariable('motorposition_z', self.motorposition_z);
+			self.setVariable('motorposition_f', self.motorposition_f);
 		}
 		catch(error) {
 			self.log('error', 'Error setting Variables from Device: ' + String(error));
