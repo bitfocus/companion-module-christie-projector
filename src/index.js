@@ -185,7 +185,7 @@ instance.prototype.handleError = function(err) {
 	Object.keys(err).forEach(function(key) {
 		if (key === 'code') {
 			if (err[key] === 'ECONNREFUSED') {
-				error = 'Unable to communicate with Device. Connection refused. Is this the right IP address? Is it still online?';
+				error = 'Unable to communicate with Device. Connection refused. Is this the right IP address?';
 				self.log('error', error);
 				self.status(self.STATUS_ERROR);
 				printedError = true;
@@ -194,7 +194,7 @@ instance.prototype.handleError = function(err) {
 				}
 			}
 			else if (err[key] === 'ETIMEDOUT') {
-				error = 'Unable to communicate with Device. Connection timed out. Is this the right IP address? Is it still online?';
+				error = 'Unable to communicate with Device. Connection timed out. Is it still online?';
 				self.log('error', error);
 				self.status(self.STATUS_ERROR);
 				printedError = true;
@@ -273,9 +273,9 @@ instance.prototype.init_tcp = function() {
 							let data_cmd_function = data_cmd_parts[0]; // SHU
 							let data_cmd_param = data_cmd_parts[1]; // 000
 
-							debug('Data Function: %s', data_cmd_function);
-							debug('Data Parameter: %s', data_cmd_param);
-							debug('Data Info: %s', data_cmd_info);
+							//debug('Data Function: %s', data_cmd_function);
+							//debug('Data Parameter: %s', data_cmd_param);
+							//debug('Data Info: %s', data_cmd_info);
 
 							let data_cmd_param_int = parseInt(data_cmd_param);
 
@@ -352,6 +352,9 @@ instance.prototype.init_tcp = function() {
 			}
 			catch(error) {
 				debug('Error processing data: %s', error);
+				self.status(self.STATE_WARNING, 'Warning');
+				self.log('warn', 'Error processing data: ' + error.toString());
+				setTimeout(clearWarning.bind(self), 5000);
 			}
 
 
