@@ -3,7 +3,7 @@
 	"legacy": [
 		"christiepj"
 	],
-	"version": "2.0.6",
+	"version": "3.0.0",
 	"api_version": "1.0.0",
 	"keywords": [
 		"Projectors"
@@ -13,7 +13,7 @@
 	"shortname": "ChristiePj",
 	"homepage": "https://github.com/bitfocus/companion-module-christie-projector#readme",
 	"description": "Module to conntrol various Christie projectors",
-	"main": "index.js",
+	"main": "src/index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
