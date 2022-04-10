@@ -1,16 +1,32 @@
 module.exports = {
 	pad2: function(num) {
-		let s = "00" + num;
-		return s.substr(s.length-2);
+		return padAmount(num, 2);
 	},
 	
 	pad3: function(num) {
-		let s = "000" + num;
-		return s.substr(s.length-3);
+		return padAmount(num, 3);
 	},
 	
 	pad4: function(num) {
-		let s = "0000" + num;
-		return s.substr(s.length-4);
+		return padAmount(num, 4);
+	},
+
+	padAmount: function(num, amount) {
+		let i = parseInt(num);
+		let neg = false;
+
+		if (i < 0) {
+			neg = true;
+		}
+
+		i = Math.abs(i); //set to positive, remove the negative/- sign
+
+		let s = i.toString().padStart(amount, '0');
+
+		if (neg) {
+			s = '-' + s;
+		}
+
+		return s;
 	}
 }

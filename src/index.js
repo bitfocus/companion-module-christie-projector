@@ -683,6 +683,7 @@ instance.prototype.sendCommand = function(cmd) {
 	if (cmd !== undefined) {
 		debug('Sending: ' + cmd);
 		if (self.socket !== undefined && self.socket.connected) {
+			self.log('debug', 'Sending cmd: ' + cmd);
 			self.socket.send(cmd);
 		}
 		else {
