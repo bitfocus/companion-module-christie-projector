@@ -1498,7 +1498,7 @@ module.exports = {
 			},
 			actions: [
 				{
-					action: 'lensshift_move_h_neg',
+					action: 'lensshift_move_h_pos',
 				}
 			],
 			release_actions: [
@@ -1522,7 +1522,7 @@ module.exports = {
 			},
 			actions: [
 				{
-					action: 'lensshift_move_h_pos',
+					action: 'lensshift_move_h_neg',
 				}
 			],
 			release_actions: [

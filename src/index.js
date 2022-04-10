@@ -354,7 +354,7 @@ instance.prototype.init_tcp = function() {
 				debug('Error processing data: %s', error);
 				self.status(self.STATE_WARNING, 'Warning');
 				self.log('warn', 'Error processing data: ' + error.toString());
-				setTimeout(clearWarning.bind(self), 5000);
+				setTimeout(self.clearWarning.bind(self), 5000);
 			}
 
 
@@ -413,7 +413,7 @@ instance.prototype.init_tcp = function() {
 				self.status(self.STATE_WARNING, 'Warning');
 				self.log('warn', 'Warning ' + msg + ': ' + data);
 
-				setTimeout(clearWarning.bind(self), 5000);
+				setTimeout(self.clearWarning.bind(self), 5000);
 
 				debug('ChristiePj: Warning %s: %s', msg, data);
 			}

@@ -1008,7 +1008,7 @@ module.exports = {
 		actions.lensshift_move_h_pos = {
 			label: 'Lens Shift - Start to Move Horizontal Motor to Positive Max',
 			callback: function(action, bank) {
-				let cmd = '(LMV+HRUN+1)';
+				let cmd = '(LMV+HRUN1)';
 				self.sendCommand(cmd);
 			}
 		}
@@ -1054,7 +1054,7 @@ module.exports = {
 		actions.lensshift_move_v_pos = {
 			label: 'Lens Shift - Start to Move Vertical Motor to Positive Max',
 			callback: function(action, bank) {
-				let cmd = '(LMV+VRUN+1)';
+				let cmd = '(LMV+VRUN1)';
 				self.sendCommand(cmd);
 			}
 		}
@@ -1100,7 +1100,7 @@ module.exports = {
 		actions.lensshift_focus_pos = {
 			label: 'Lens Shift - Start to Move Focus Motor to Positive Max',
 			callback: function(action, bank) {
-				let cmd = '(LMV+FRUN+1)';
+				let cmd = '(LMV+FRUN1)';
 				self.sendCommand(cmd);
 			}
 		}
@@ -1124,7 +1124,7 @@ module.exports = {
 		actions.lensshift_zoom_pos = {
 			label: 'Lens Shift - Start to Move Zoom Motor to Positive Max',
 			callback: function(action, bank) {
-				let cmd = '(LMV+ZRUN+1)';
+				let cmd = '(LMV+ZRUN1)';
 				self.sendCommand(cmd);
 			}
 		}

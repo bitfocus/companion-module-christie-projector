@@ -1,14 +1,14 @@
 module.exports = {
 	pad2: function(num) {
-		return padAmount(num, 2);
+		return this.padAmount(num, 2);
 	},
 	
 	pad3: function(num) {
-		return padAmount(num, 3);
+		return this.padAmount(num, 3);
 	},
 	
 	pad4: function(num) {
-		return padAmount(num, 4);
+		return this.padAmount(num, 4);
 	},
 
 	padAmount: function(num, amount) {
