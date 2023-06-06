@@ -27,6 +27,7 @@ module.exports = {
 	],
 
 	colorName: [
+		{ label: 'White (all colors on)', id: '0' },
 		{ label: 'Red',	id: '1' },
 		{ label: 'Green', id: '2' },
 		{ label: 'Blue', id: '3' },
