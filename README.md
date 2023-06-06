@@ -29,3 +29,7 @@ See HELP.md and LICENSE
 **V3.0.0**
 * Module refactored for easier maintenance
 * Added lens shift/motor position control for J-Series projectors, with Presets
+
+**V4.0.0**
+* Module upgraded to Companion v3 API
+* Other minor improvements as able/noticed
