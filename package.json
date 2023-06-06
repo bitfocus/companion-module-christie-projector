@@ -1,33 +1,19 @@
 {
 	"name": "christie-projector",
-	"legacy": [
-		"christiepj"
-	],
-	"version": "3.0.1",
-	"api_version": "1.0.0",
-	"keywords": [
-		"Projectors"
-	],
-	"manufacturer": "Christie",
-	"product": "Projector",
-	"shortname": "ChristiePj",
-	"homepage": "https://github.com/bitfocus/companion-module-christie-projector#readme",
-	"description": "Module to conntrol various Christie projectors",
-	"main": "src/index.js",
+	"version": "4.0.0",
+	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"author": "Per Røine <per.roine@gmail.com>",
-	"contributors": [
-		"Andreas Thomsen <mc-hauge@hotmail.com>",
-		"Joseph Adams <josephdadams@gmail.com>"
-	],
 	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-christie-projector/issues"
-	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-christie-projector.git"
+	},
+	"dependencies": {
+		"@companion-module/base": "~1.4.1"
+	},
+	"devDependencies": {
+		"@companion-module/tools": "^1.2.1"
 	}
 }

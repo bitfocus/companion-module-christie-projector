@@ -1,14 +1,11 @@
+const { combineRgb } = require('@companion-module/base')
+
 const choices = require('./choices.js');
 
 module.exports = {
-	setPresets: function () {
+	initPresets: function () {
 		let self = this;
 		let presets = [];
-
-		const foregroundColor = self.rgb(255, 255, 255) // White
-		const foregroundColorBlack = self.rgb(0, 0, 0) // Black
-		const backgroundColorRed = self.rgb(255, 0, 0) // Red
-		const backgroundColorWhite = self.rgb(255, 255, 255) // White
 
 		// ###################### Auto Source ######################
 
@@ -16,24 +13,30 @@ module.exports = {
 		for (let input = 0; input < 50; input++) {
 			for (let input2 in choices.OnOff) {
 				presets.push({
+					type: 'button',
 					category: 'Auto Source',
-					label: ' Auto Source ' + (input+1) + ' ' + choices.OnOff[input2].label,
-					bank: {
-						style: 'text',
+					name: ' Auto Source ' + (input+1) + ' ' + choices.OnOff[input2].label,
+					style: {
 						text: 'ASR CH ' + (input+1) + ' ' + choices.OnOff[input2].label,
 						size: 'auto',
 						color: '16777215',
-						bgcolor: self.rgb(0, 0, 0)
+						bgcolor: combineRgb(0, 0, 0)
 					},
-					actions: [
+					steps: [
 						{
-							action: 'asr',
-							options: {
-								p1: (input+1),
-								p2: choices.OnOff[input2].id
-							}
+							down: [
+								{
+									actionId: 'asr',
+									options: {
+										p1: (input+1),
+										p2: choices.OnOff[input2].id
+									}
+								}
+							],
+							up: []
 						}
 					],
+					feedbacks: []
 				});
 			}
 		}
@@ -43,23 +46,29 @@ module.exports = {
 		// Brightness Set 0-100%
 		for (let input = 0; input < 11; input++) {
 			presets.push({
+				type: 'button',
 				category: 'Brightness',
-				label: 'Brightness Set ' + (input*10) + '%',
-				bank: {
-					style: 'text',
+				name: 'Brightness Set ' + (input*10) + '%',
+				style: {
 					text: 'Bright ' + (input*10) + '%',
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'brt',
-						options: {
-							p1: (input*100),
-						}
+						down: [
+							{
+								actionId: 'brt',
+								options: {
+									p1: (input*100),
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -68,23 +77,29 @@ module.exports = {
 		// Contrast Set 0-100%
 		for (let input = 0; input < 11; input++) {
 			presets.push({
+				type: 'button',
 				category: 'Contrast',
-				label: 'Contrast Set ' + (input*10) + '%',
-				bank: {
-					style: 'text',
+				name: 'Contrast Set ' + (input*10) + '%',
+				style: {
 					text: 'Cont. ' + (input*10) + '%',
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'con',
-						options: {
-							p1: (input*100),
-						}
+						down: [
+							{
+								actionId: 'con',
+								options: {
+									p1: (input*100),
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -93,23 +108,29 @@ module.exports = {
 		// Color Set 0-100%
 		for (let input = 0; input < 11; input++) {
 			presets.push({
+				type: 'button',
 				category: 'Color',
-				label: 'Color Set ' + (input*10) + '%',
-				bank: {
-					style: 'text',
+				name: 'Color Set ' + (input*10) + '%',
+				style: {
 					text: 'Color ' + (input*10) + '%',
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'clr',
-						options: {
-							p1: (input*100),
-						}
+						down: [
+							{
+								actionId: 'clr',
+								options: {
+									p1: (input*100),
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -118,23 +139,29 @@ module.exports = {
 		// Tint Set 0-100%
 		for (let input = 0; input < 11; input++) {
 			presets.push({
+				type: 'button',
 				category: 'Tint',
-				label: 'Tint Set ' + (input*10) + '%',
-				bank: {
-					style: 'text',
+				name: 'Tint Set ' + (input*10) + '%',
+				style: {
 					text: 'Tint ' + (input*10) + '%',
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'tnt',
-						options: {
-							p1: (input*100),
-						}
+						down: [
+							{
+								actionId: 'tnt',
+								options: {
+									p1: (input*100),
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -143,23 +170,29 @@ module.exports = {
 		// Gamma Set 100-280 = 1.8-2.0
 		for (let input = 0; input < 19; input++) {
 			presets.push({
+				type: 'button',
 				category: 'Gamma',
-				label: 'Gamma Set ' + (input*10+100),
-				bank: {
-					style: 'text',
+				name: 'Gamma Set ' + (input*10+100),
+				style: {
 					text: 'Gamma ' + (input*10+100),
 					size: '18',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'gam',
-						options: {
-							p1: (input*10+100),
-						}
+						down: [
+							{
+								actionId: 'gam',
+								options: {
+									p1: (input*10+100),
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -168,23 +201,29 @@ module.exports = {
 		// Motion Filter
 		for (let input in choices.motionFilter) {
 			presets.push({
+				type: 'button',
 				category: 'Motion Filter',
-				label: 'Motion Filter ' + choices.motionFilter[input].label,
-				bank: {
-					style: 'text',
+				name: 'Motion Filter ' + choices.motionFilter[input].label,
+				style: {
 					text: 'Motion ' + choices.motionFilter[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'mot',
-						options: {
-							p1: choices.motionFilter[input].id
-						}
+						down: [
+							{
+								actionId: 'mot',
+								options: {
+									p1: choices.motionFilter[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -193,161 +232,203 @@ module.exports = {
 		// Aspect Ratio Overlay ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'Image',
-				label: 'Aspect Ratio Overlay ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'Aspect Ratio Overlay ' + choices.OnOff[input].label,
+				style: {
 					text: 'ARO ' + choices.OnOff[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'aro',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'aro',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Freeze Image ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'Image',
-				label: 'Freeze Image ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'Freeze Image ' + choices.OnOff[input].label,
+				style: {
 					text: 'Freeze ' + choices.OnOff[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'frz',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'frz',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Select Color Output / Profile
 		for (let input in choices.colorProfile) {
 			presets.push({
+				type: 'button',
 				category: 'Image',
-				label: 'Select Color Output/Profile ' + choices.colorProfile[input].label,
-				bank: {
-					style: 'text',
+				name: 'Select Color Output/Profile ' + choices.colorProfile[input].label,
+				style: {
 					text: 'Color Prof. ' + choices.colorProfile[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'ccs',
-						options: {
-							p1: choices.colorProfile[input].id
-						}
+						down: [
+							{
+								actionId: 'ccs',
+								options: {
+									p1: choices.colorProfile[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Color Space
 		for (let input in choices.colorSpace) {
 			presets.push({
+				type: 'button',
 				category: 'Image',
-				label: 'Color Space ' + choices.colorSpace[input].label,
-				bank: {
-					style: 'text',
+				name: 'Color Space ' + choices.colorSpace[input].label,
+				style: {
 					text: 'Color Space ' + choices.colorSpace[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'csp',
-						options: {
-							p1: choices.colorSpace[input].id
-						}
+						down: [
+							{
+								actionId: 'csp',
+								options: {
+									p1: choices.colorSpace[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Color Enable
 		for (let input in choices.colorName) {
 			presets.push({
+				type: 'button',
 				category: 'Image',
-				label: 'Color Enable ' + choices.colorName[input].label,
-				bank: {
-					style: 'text',
+				name: 'Color Enable ' + choices.colorName[input].label,
+				style: {
 					text: 'Color En. ' + choices.colorName[input].label,
 					size: '14',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'cle',
-						options: {
-							p1: choices.colorName[input].id
-						}
+						down: [
+							{
+								actionId: 'cle',
+								options: {
+									p1: choices.colorName[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Input Filter
 		for (let input in choices.inputFilter) {
 			presets.push({
+				type: 'button',
 				category: 'Image',
-				label: 'Input Filter ' + choices.inputFilter[input].label,
-				bank: {
-					style: 'text',
+				name: 'Input Filter ' + choices.inputFilter[input].label,
+				style: {
 					text: 'Filter ' + choices.inputFilter[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'fil',
-						options: {
-							p1: choices.inputFilter[input].id
-						}
+						down: [
+							{
+								actionId: 'fil',
+								options: {
+									p1: choices.inputFilter[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Image Optimazation
 		for (let input in choices.imageOpti) {
 			presets.push({
+				type: 'button',
 				category: 'Image',
-				label: 'Image Optimazation ' + choices.imageOpti[input].label,
-				bank: {
-					style: 'text',
+				name: 'Image Optimazation ' + choices.imageOpti[input].label,
+				style: {
 					text: 'Image Op. ' + choices.imageOpti[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'iop',
-						options: {
-							p1: choices.imageOpti[input].id
-						}
+						down: [
+							{
+								actionId: 'iop',
+								options: {
+									p1: choices.imageOpti[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -355,89 +436,115 @@ module.exports = {
 
 		// Horizontal Position
 		presets.push({
+			type: 'button',
 			category: 'Position',
-			label: 'Horizontal Position: 500',
-			bank: {
+			name: 'Horizontal Position: 500',
+			style: {
 				style: 'text',
 				text: 'Hori. Pos 500',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'hor',
-					options: {
-						p1: '500'
-					}
+					down: [
+						{
+							actionId: 'hor',
+							options: {
+								p1: '500'
+							}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// Vertical Position
 		presets.push({
+			type: 'button',
 			category: 'Position',
-			label: 'Vertical Position: 500',
-			bank: {
+			name: 'Vertical Position: 500',
+			style: {
 				style: 'text',
 				text: 'Vert. Pos 500',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'vrt',
-					options: {
-						p1: '500'
-					}
+					down: [
+						{
+							actionId: 'vrt',
+							options: {
+								p1: '500'
+							}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// Screen Orientation
 		for (let input in choices.selectOri) {
 			presets.push({
+				type: 'button',
 				category: 'Position',
-				label: 'Screen Orientation ' + choices.selectOri[input].label,
-				bank: {
-					style: 'text',
+				name: 'Screen Orientation ' + choices.selectOri[input].label,
+				style: {
 					text: 'Orient. ' + choices.selectOri[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'sor',
-						options: {
-							p1: choices.selectOri[input].id
-						}
+						down: [
+							{
+								actionId: 'sor',
+								options: {
+									p1: choices.selectOri[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Screen Size Preset
 		for (let input in choices.size) {
 			presets.push({
+				type: 'button',
 				category: 'Position',
-				label: 'Screen Size Preset ' + choices.size[input].label,
-				bank: {
-					style: 'text',
+				name: 'Screen Size Preset ' + choices.size[input].label,
+				style: {
 					text: 'Size Preset ' + choices.size[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'szp',
-						options: {
-							p1: choices.size[input].id
-						}
+						down: [
+							{
+								actionId: 'szp',
+								options: {
+									p1: choices.size[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -446,23 +553,29 @@ module.exports = {
 		// Warp Select (Basic)
 		for (let input in choices.warpSelBasic) {
 			presets.push({
+				type: 'button',
 				category: 'Warp Select (Basic)',
-				label: 'Warp Select (Basic) ' + choices.warpSelBasic[input].label,
-				bank: {
-					style: 'text',
+				name: 'Warp Select (Basic) ' + choices.warpSelBasic[input].label,
+				style: {
 					text: 'Warp Basic: ' + choices.warpSelBasic[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'wps',
-						options: {
-							p1: choices.warpSelBasic[input].id
-						}
+						down: [
+							{
+								actionId: 'wps',
+								options: {
+									p1: choices.warpSelBasic[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -471,23 +584,29 @@ module.exports = {
 		// Warp Select (M-series/Boxer)
 		for (let input in choices.warpSelMseries) {
 			presets.push({
+				type: 'button',
 				category: 'Warp Select (M-Serise)',
-				label: 'Warp Select (M-series/Boxer) ' + choices.warpSelMseries[input].label,
-				bank: {
-					style: 'text',
+				name: 'Warp Select (M-series/Boxer) ' + choices.warpSelMseries[input].label,
+				style: {
 					text: 'Warp Mser: ' + choices.warpSelMseries[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'wrp',
-						options: {
-							p1: choices.warpSelMseries[input].id
-						}
+						down: [
+							{
+								actionId: 'wrp',
+								options: {
+									p1: choices.warpSelMseries[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -496,261 +615,341 @@ module.exports = {
 		// Automatic Lens Calibration ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'Lens',
-				label: 'Automatic Lens Calibration ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'Automatic Lens Calibration ' + choices.OnOff[input].label,
+				style: {
 					text: 'Lamp Auto Cali. ' + choices.OnOff[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'alc',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'alc',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Lens Calibrate
 		for (let input in choices.lensCal) {
 			presets.push({
+				type: 'button',
 				category: 'Lens',
-				label: 'Lens Calibrate ' + choices.lensCal[input].label,
-				bank: {
-					style: 'text',
+				name: 'Lens Calibrate ' + choices.lensCal[input].label,
+				style: {
 					text: 'Lamp Cali. ' + choices.lensCal[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'lcb',
-						options: {
-							p1: choices.lensCal[input].id
-						}
+						down: [
+							{
+								actionId: 'lcb',
+								options: {
+									p1: choices.lensCal[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Lens Center
 		presets.push({
+			type: 'button',
 			category: 'Lens',
-			label: 'Lens Center',
-			bank: {
+			name: 'Lens Center',
+			style: {
 				style: 'text',
 				text: 'Lens Center',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lcn'
+					down: [
+						{
+							actionId: 'lcn',
+							options: {}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// Intelligent Lens System ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'Lens',
-				label: 'Intelligent Lens System ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'Intelligent Lens System ' + choices.OnOff[input].label,
+				style: {
 					text: 'ILS ' + choices.OnOff[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'ils',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'ils',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Zoom
 		presets.push({
+			type: 'button',
 			category: 'Lens',
-			label: 'Zoom',
-			bank: {
+			name: 'Zoom',
+			style: {
 				style: 'text',
 				text: 'Zoom 5000',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'zom',
-					options: {
-						p1: '3000'
-					}
+					down: [
+						{
+							actionId: 'zom',
+							options: {
+								p1: '5000'
+							}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// Focus
 		presets.push({
+			type: 'button',
 			category: 'Lens',
-			label: 'Focus',
-			bank: {
+			name: 'Focus',
+			style: {
 				style: 'text',
 				text: 'Focus 4000',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'fcs',
-					options: {
-						p1: '4000'
-					}
+					down: [
+						{
+							actionId: 'fcs',
+							options: {
+								p1: '4000'
+							}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// ###################### Lamp ######################
 
 		// Get Lamp ON Time
 		presets.push({
+			type: 'button',
 			category: 'Lamp',
-			label: 'Get Lamp ON Time',
-			bank: {
+			name: 'Get Lamp ON Time',
+			style: {
 				style: 'text',
 				text: 'Get Lamp Time',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lph'
+					down: [
+						{
+							actionId: 'lph',
+							options: {}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// Lamp Conditioning ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'Lamp',
-				label: 'Lamp Conditioning ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'Lamp Conditioning ' + choices.OnOff[input].label,
+				style: {
 					text: 'Lamp Con ' + choices.OnOff[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'lco',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'lco',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Lamp Operation
 		for (let input in choices.lampOp) {
 			presets.push({
+				type: 'button',
 				category: 'Lamp',
-				label: 'Lamp Operation ' + choices.lampOp[input].label,
-				bank: {
-					style: 'text',
+				name: 'Lamp Operation ' + choices.lampOp[input].label,
+				style: {
 					text: 'Lamp Op ' + choices.lampOp[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'lop',
-						options: {
-							p1: choices.lampOp[input].id
-						}
+						down: [
+							{
+								actionId: 'lop',
+								options: {
+									p1: choices.lampOp[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Lamp Mode
 		for (let input in choices.lampMode) {
 			presets.push({
+				type: 'button',
 				category: 'Lamp',
-				label: 'Lamp Mode ' + choices.lampMode[input].label,
-				bank: {
-					style: 'text',
+				name: 'Lamp Mode ' + choices.lampMode[input].label,
+				style: {
 					text: 'Lamp Mode ' + choices.lampMode[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'lpm',
-						options: {
-							p1: choices.lampMode[input].id
-						}
+						down: [
+							{
+								actionId: 'lpm',
+								options: {
+									p1: choices.lampMode[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Lamp Intensity
 		presets.push({
+			type: 'button',
 			category: 'Lamp',
-			label: 'Lamp Intensity',
-			bank: {
+			name: 'Lamp Intensity',
+			style: {
 				style: 'text',
-				text: 'Lamp Intencity 100',
+				text: 'Lamp Intensity 100',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lpi',
-					options: {
-						p1: '100'
-					}
+					down: [
+						{
+							actionId: 'lpi',
+							options: {
+								p1: '100'
+							}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// Lamp Changed
 		presets.push({
+			type: 'button',
 			category: 'Lamp',
-			label: 'Lamp Changed',
-			bank: {
+			name: 'Lamp Changed',
+			style: {
 				style: 'text',
 				text: 'Lamp Changed',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lpc',
-					options: {
-						p1: ''
-					}
+					down: [
+						{
+							actionId: 'lpc',
+							options: {
+								p1: ''
+							}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// ###################### Input Channel ######################
@@ -758,27 +957,34 @@ module.exports = {
 		// Set Input Channel
 		for (let i = 0; i < 50; i++) {
 			presets.push({
+				type: 'button',
 				category: 'Select Channel',
-				label: 'CH ' + (i+1),
-				bank: {
-					style: 'text',
+				name: 'CH ' + (i+1),
+				style: {
 					text: 'CH ' + (i+1),
 					size: 'auto',
 					color: '16777215',
 					bgcolor: 0
 				},
-				actions: [{
-					action: 'cha',
-					options: {
-						p1: (i+1),
+				steps: [
+					{
+						down: [
+							{
+								actionId: 'cha',
+								options: {
+									p1: (i+1),
+								}
+							}
+						],
+						up: []
 					}
-				}],
+				],
 				feedbacks: [
 					{
-						type: 'input_channel',
+						feedbackId: 'input_channel',
 						options: {
-							fg1: self.rgb(255, 255, 255),
-							bg1: self.rgb(255, 0, 0),
+							fg1: combineRgb(255, 255, 255),
+							bg1: combineRgb(255, 0, 0),
 							input: (i+1)
 						}
 					}
@@ -792,27 +998,34 @@ module.exports = {
 		// Set Input Slot
 		for (let input in choices.inputSelect) {
 			presets.push({
+				type: 'button',
 				category: 'Input Slot',
-				label: 'Slot ' + choices.inputSelect[input].label,
-				bank: {
-					style: 'text',
+				name: 'Slot ' + choices.inputSelect[input].label,
+				style: {
 					text: 'Slot ' + choices.inputSelect[input].label,
 					size: 'auto',
 					color: '16777215',
 					bgcolor: 0
 				},
-				actions: [{
-					action: 'sin',
-					options: {
-						p1: choices.inputSelect[input].label,
+				steps: [
+					{
+						down: [
+							{
+								actionId: 'sin',
+								options: {
+									p1: choices.inputSelect[input].id,
+								}
+							}
+						],
+						up: []
 					}
-				}],
+				],
 				feedbacks: [
 					{
-						type: 'input_slot',
+						feedbackId: 'input_slot',
 						options: {
-							fg1: self.rgb(255, 255, 255),
-							bg1: self.rgb(255, 0, 0),
+							fg1: combineRgb(255, 255, 255),
+							bg1: combineRgb(255, 0, 0),
 							input: choices.inputSelect[input].id
 						}
 					}
@@ -826,21 +1039,29 @@ module.exports = {
 		// Internal Test Pattern (General/Basic)
 		for (let input in choices.tpatBasic) {
 			presets.push({
+				type: 'button',
 				category: 'Test Pattern (Basic)',
-				label: 'Internal Test Pattern (General/Basic) ' + choices.tpatBasic[input].label,
-				bank: {
-					style: 'text',
+				name: 'Internal Test Pattern (General/Basic) ' + choices.tpatBasic[input].label,
+				style: {
 					text: 'ITP ' + choices.tpatBasic[input].label,
 					size: '14',
 					color: '16777215',
 					bgcolor: 0
 				},
-				actions: [{
-					action: 'itpBasic',
-					options: {
-						p1: choices.tpatBasic[input].label,
+				steps: [
+					{
+						down: [
+							{
+								actionId: 'itpBasic',
+								options: {
+									p1: choices.tpatBasic[input].id,
+								}
+							}
+						],
+						up: []
 					}
-				}]
+				],
+				feedbacks: []
 			});
 		}
 
@@ -849,21 +1070,29 @@ module.exports = {
 		// Internal Test Pattern (Boxer)
 		for (let input in choices.tpatBoxer) {
 			presets.push({
+				type: 'button',
 				category: 'Test Pattern (Boxer)',
-				label: 'Internal Test Pattern (Boxer) ' + choices.tpatBoxer[input].label,
-				bank: {
-					style: 'text',
+				name: 'Internal Test Pattern (Boxer) ' + choices.tpatBoxer[input].label,
+				style: {
 					text: 'ITP ' + choices.tpatBoxer[input].label,
 					size: '14',
 					color: '16777215',
 					bgcolor: 0
 				},
-				actions: [{
-					action: 'itpBoxer',
-					options: {
-						p1: choices.tpatBoxer[input].label,
+				steps: [
+					{
+						down: [
+							{
+								actionId: 'itpBoxer',
+								options: {
+									p1: choices.tpatBoxer[input].id,
+								}
+							}
+						],
+						up: []
 					}
-				}]
+				],
+				feedbacks: []
 			});
 		}
 
@@ -872,21 +1101,29 @@ module.exports = {
 		// Internal Test Pattern (Boxer)
 		for (let input in choices.tpatMser) {
 			presets.push({
+				type: 'button',
 				category: 'Test Pattern (M-Series)',
-				label: 'Internal Test Pattern (M-Series) ' + choices.tpatMser[input].label,
-				bank: {
-					style: 'text',
+				name: 'Internal Test Pattern (M-Series) ' + choices.tpatMser[input].label,
+				style: {
 					text: 'ITP ' + choices.tpatMser[input].label,
 					size: '14',
 					color: '16777215',
 					bgcolor: 0
 				},
-				actions: [{
-					action: 'itpMser',
-					options: {
-						p1: choices.tpatMser[input].label,
+				steps: [
+					{
+						down: [
+							{
+								actionId: 'itpMser',
+								options: {
+									p1: choices.tpatMser[input].id,
+								}
+							}
+						],
+						up: []
 					}
-				}]
+				],
+				feedbacks: []
 			});
 		}
 
@@ -895,30 +1132,35 @@ module.exports = {
 		// PIP ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'PIP',
-				label: 'Picture In Picture ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'Picture In Picture ' + choices.OnOff[input].label,
+				style: {
 					text: 'PIP ' + choices.OnOff[input].label + ' $(ChristiePj:pip_enabled)',
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'pip',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'pip',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
 				feedbacks: [
 					{
-						type: 'pip_enabled',
+						feedbackId: 'pip_enabled',
 						options: {
-							fg1: self.rgb(255, 255, 255),
-							bg1: self.rgb(255, 0, 0),
-							bg2: self.rgb(0, 204, 0),
+							fg1: combineRgb(255, 255, 255),
+							bg1: combineRgb(255, 0, 0),
+							bg2: combineRgb(0, 204, 0),
 						}
 					}
 				]
@@ -927,42 +1169,56 @@ module.exports = {
 
 		// PIP Swap
 		presets.push({
+			type: 'button',
 			category: 'PIP',
-			label: 'Picture In Picture Swap',
-			bank: {
+			name: 'Picture In Picture Swap',
+			style: {
 				style: 'text',
 				text: 'PIP Swap',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'pps',
+					down: [
+						{
+							actionId: 'pps',
+							options: {}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// PIP Preset
 		for (let input in choices.pipPreset) {
 			presets.push({
+				type: 'button',
 				category: 'PIP',
-				label: 'Picture In Picture Preset' + choices.pipPreset[input].label,
-				bank: {
-					style: 'text',
+				name: 'Picture In Picture Preset' + choices.pipPreset[input].label,
+				style: {
 					text: 'PIP ' + choices.pipPreset[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'ppp',
-						options: {
-							p1: choices.pipPreset[input].id
-						}
+						down: [
+							{
+								actionId: 'ppp',
+								options: {
+									p1: choices.pipPreset[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -972,24 +1228,30 @@ module.exports = {
 		for (let input in choices.keypadEnableP1) {
 			for (let input2 in choices.keypadEnableP2) {
 				presets.push({
+					type: 'button',
 					category: 'Keypad ' + choices.keypadEnableP1[input].label,
-					label: choices.keypadEnableP1[input].label + ' ' + choices.keypadEnableP2[input2].label,
-					bank: {
-						style: 'text',
-						text: choices.keypadEnableP1[input].label + ' ' + choices.keypadEnableP2[input2].label,
+					name: choices.keypadEnableP1[input].label + ' ' + choices.keypadEnableP2[input2].label,
+					style: {
+							text: choices.keypadEnableP1[input].label + ' ' + choices.keypadEnableP2[input2].label,
 						size: 'auto',
 						color: '16777215',
-						bgcolor: self.rgb(0, 0, 0)
+						bgcolor: combineRgb(0, 0, 0)
 					},
-					actions: [
+					steps: [
 						{
-							action: 'ken',
-							options: {
-								p1: choices.keypadEnableP1[input].id,
-								p2: choices.keypadEnableP2[input2].id
-							}
+							down: [
+								{
+									actionId: 'ken',
+									options: {
+										p1: choices.keypadEnableP1[input].id,
+										p2: choices.keypadEnableP2[input2].id
+									}
+								}
+							],
+							up: []
 						}
 					],
+					feedbacks: []
 				});
 			}
 		}
@@ -999,23 +1261,29 @@ module.exports = {
 		// Key Code
 		for (let input in choices.keyCode) {
 			presets.push({
+				type: 'button',
 				category: 'Key Codes',
-				label: 'Key Code:' + choices.keyCode[input].label,
-				bank: {
-					style: 'text',
+				name: 'Key Code:' + choices.keyCode[input].label,
+				style: {
 					text: 'KEY: ' + choices.keyCode[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'key',
-						options: {
-							p1: choices.keyCode[input].id
-						}
+						down: [
+							{
+								actionId: 'key',
+								options: {
+									p1: choices.keyCode[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -1024,23 +1292,29 @@ module.exports = {
 		// Set Language
 		for (let input in choices.language) {
 			presets.push({
+				type: 'button',
 				category: 'Language',
-				label: 'Set Language:' + choices.language[input].label,
-				bank: {
-					style: 'text',
+				name: 'Set Language:' + choices.language[input].label,
+				style: {
 					text: 'LNG: ' + choices.language[input].label,
 					size: '18',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'lng',
-						options: {
-							p1: choices.language[input].id
-						}
+						down: [
+							{
+								actionId: 'lng',
+								options: {
+									p1: choices.language[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
@@ -1048,76 +1322,94 @@ module.exports = {
 
 			// Auto Setup
 			presets.push({
+				type: 'button',
 				category: 'Commands',
-				label: 'Auto Setup',
-				bank: {
-					style: 'text',
+				name: 'Auto Setup',
+				style: {
 					text: 'Auto Setup',
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'asu',
+						down: [
+							{
+								actionId: 'asu',
+								options: {}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 
 		// Auto Power Up ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'Commands',
-				label: 'Auto Power Up ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'Auto Power Up ' + choices.OnOff[input].label,
+				style: {
 					text: 'Auto PWR ' + choices.OnOff[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'apw',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'apw',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Power ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'Commands',
-				label: 'Power ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'Power ' + choices.OnOff[input].label,
+				style: {
 					text: 'PWR ' + choices.OnOff[input].label +' $(ChristiePj:power_state)',
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'pwr',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'pwr',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
 				feedbacks: [
 					{
-						type: 'power_state',
+						feedbackId: 'power_state',
 						options: {
-							fg1: self.rgb(255, 255, 255),
-							fg2: self.rgb(0, 0, 0),
-							bg1: self.rgb(0, 204, 0),
-							bg2: self.rgb(255, 0, 0),
-							bg3: self.rgb(255, 255, 0),
-							bg4: self.rgb(255, 255, 0),
-							bg5: self.rgb(255, 255, 0),
+							fg1: combineRgb(255, 255, 255),
+							fg2: combineRgb(0, 0, 0),
+							bg1: combineRgb(0, 204, 0),
+							bg2: combineRgb(255, 0, 0),
+							bg3: combineRgb(255, 255, 0),
+							bg4: combineRgb(255, 255, 0),
+							bg5: combineRgb(255, 255, 0),
 						}
 					}
 				]
@@ -1127,30 +1419,35 @@ module.exports = {
 		// Shutter Open / Close
 		for (let input in choices.shutter) {
 			presets.push({
+				type: 'button',
 				category: 'Commands',
-				label: 'Shutter ' + choices.shutter[input].label,
-				bank: {
-					style: 'text',
+				name: 'Shutter ' + choices.shutter[input].label,
+				style: {
 					text: 'Shutter ' + choices.shutter[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'shu',
-						options: {
-							p1: choices.shutter[input].id
-						}
+						down: [
+							{
+								actionId: 'shu',
+								options: {
+									p1: choices.shutter[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
 				feedbacks: [
 					{
-						type: 'shutter_closed',
+						feedbackId: 'shutter_closed',
 						options: {
-							fg1: self.rgb(255, 255, 255),
-							bg1: self.rgb(255, 0, 0),
-							bg2: self.rgb(0, 204, 0),
+							fg1: combineRgb(255, 255, 255),
+							bg1: combineRgb(255, 0, 0),
+							bg2: combineRgb(0, 204, 0),
 						}
 					}
 				]
@@ -1160,30 +1457,35 @@ module.exports = {
 		// OSD ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'Commands',
-				label: 'On Screen Display ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'On Screen Display ' + choices.OnOff[input].label,
+				style: {
 					text: 'OSD ' + choices.OnOff[input].label + ' $(ChristiePj:osd_enabled)',
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'osd',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'osd',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
 				feedbacks: [
 					{
-						type: 'osd_enabled',
+						feedbackId: 'osd_enabled',
 						options: {
-							fg1: self.rgb(255, 255, 255),
-							bg1: self.rgb(255, 0, 0),
-							bg2: self.rgb(0, 204, 0),
+							fg1: combineRgb(255, 255, 255),
+							bg1: combineRgb(255, 0, 0),
+							bg2: combineRgb(0, 204, 0),
 						}
 					}
 				]
@@ -1193,112 +1495,142 @@ module.exports = {
 		// Source Dialog Enable ON / OFF
 		for (let input in choices.OnOff) {
 			presets.push({
+				type: 'button',
 				category: 'Commands',
-				label: 'Source Dialog Enable ' + choices.OnOff[input].label,
-				bank: {
-					style: 'text',
+				name: 'Source Dialog Enable ' + choices.OnOff[input].label,
+				style: {
 					text: 'Source Dia En. ' + choices.OnOff[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'sde',
-						options: {
-							p1: choices.OnOff[input].id
-						}
+						down: [
+							{
+								actionId: 'sde',
+								options: {
+									p1: choices.OnOff[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Error Message Enable
 		for (let input in choices.errorEnable) {
 			presets.push({
+				type: 'button',
 				category: 'Commands',
-				label: 'Error Message Enable ' + choices.errorEnable[input].label,
-				bank: {
-					style: 'text',
+				name: 'Error Message Enable ' + choices.errorEnable[input].label,
+				style: {
 					text: 'ERR MSG: ' + choices.errorEnable[input].label,
 					size: 'auto',
 					color: '16777215',
-					bgcolor: self.rgb(0, 0, 0)
+					bgcolor: combineRgb(0, 0, 0)
 				},
-				actions: [
+				steps: [
 					{
-						action: 'eme',
-						options: {
-							p1: choices.errorEnable[input].id
-						}
+						down: [
+							{
+								actionId: 'eme',
+								options: {
+									p1: choices.errorEnable[input].id
+								}
+							}
+						],
+						up: []
 					}
 				],
+				feedbacks: []
 			});
 		}
 
 		// Get Lamp ON Time
 		presets.push({
+			type: 'button',
 			category: 'Commands',
-			label: 'Get Lamp ON Time',
-			bank: {
+			name: 'Get Lamp ON Time',
+			style: {
 				style: 'text',
 				text: 'Get Lamp Time',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lph'
+					down: [
+						{
+							actionId: 'lph',
+							options: {}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// Factory Defaults
 		presets.push({
+			type: 'button',
 			category: 'Commands',
-			label: 'Factory Defaults',
-			bank: {
+			name: 'Factory Defaults',
+			style: {
 				style: 'text',
 				text: 'Factory Reset',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'def',
-					options: {
-						p1: '111'
-					}
+					down: [
+						{
+							actionId: 'def',
+							options: {
+								p1: '111'
+							}
+
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// ###################### Status ######################
 
 		// Power State
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show Power State',
-			bank: {
+			name: 'Show Power State',
+			style: {
 				style: 'text',
 				text: 'PWR: $(ChristiePj:power_state)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
+			steps: [],
 			feedbacks: [
 				{
-					type: 'power_state',
+					feedbackId: 'power_state',
 					options: {
-						fg1: self.rgb(255, 255, 255),
-						fg2: self.rgb(0, 0, 0),
-						bg1: self.rgb(0, 204, 0),
-						bg2: self.rgb(255, 0, 0),
-						bg3: self.rgb(255, 255, 0),
-						bg4: self.rgb(255, 255, 0),
-						bg5: self.rgb(255, 255, 0),
+						fg1: combineRgb(255, 255, 255),
+						fg2: combineRgb(0, 0, 0),
+						bg1: combineRgb(0, 204, 0),
+						bg2: combineRgb(255, 0, 0),
+						bg3: combineRgb(255, 255, 0),
+						bg4: combineRgb(255, 255, 0),
+						bg5: combineRgb(255, 255, 0),
 					}
 				}
 			]
@@ -1306,22 +1638,24 @@ module.exports = {
 
 		// Standby State
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show Standby State',
-			bank: {
+			name: 'Show Standby State',
+			style: {
 				style: 'text',
 				text: 'STB: $(ChristiePj:standby)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
+			steps: [],
 			feedbacks: [
 				{
-					type: 'standby_state',
+					feedbackId: 'standby_state',
 					options: {
-						fg1: self.rgb(255, 255, 255),
-						bg1: self.rgb(255, 0, 0),
-						bg2: self.rgb(0, 204, 0),
+						fg1: combineRgb(255, 255, 255),
+						bg1: combineRgb(255, 0, 0),
+						bg2: combineRgb(0, 204, 0),
 					}
 				}
 			]
@@ -1329,24 +1663,26 @@ module.exports = {
 
 		// Signal present
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show Signal Status',
-			bank: {
+			name: 'Show Signal Status',
+			style: {
 				style: 'text',
 				text: 'Signal: $(ChristiePj:signal_state)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
+			steps: [],
 			feedbacks: [
 				{
-					type: 'signal_state',
+					feedbackId: 'signal_state',
 					options: {
-						fg1: self.rgb(255, 255, 255),
-						fg2: self.rgb(0, 0, 0),
-						bg1: self.rgb(0, 204, 0),
-						bg2: self.rgb(255, 0, 0),
-						bg3: self.rgb(255, 255, 0),
+						fg1: combineRgb(255, 255, 255),
+						fg2: combineRgb(0, 0, 0),
+						bg1: combineRgb(0, 204, 0),
+						bg2: combineRgb(255, 0, 0),
+						bg3: combineRgb(255, 255, 0),
 					}
 				}
 			]
@@ -1354,22 +1690,24 @@ module.exports = {
 
 		// Shutter State
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show Shutter Status',
-			bank: {
+			name: 'Show Shutter Status',
+			style: {
 				style: 'text',
 				text: 'Shutter: $(ChristiePj:shutter_closed)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
+			steps: [],
 			feedbacks: [
 				{
-					type: 'shutter_closed',
+					feedbackId: 'shutter_closed',
 					options: {
-						fg1: self.rgb(255, 255, 255),
-						bg1: self.rgb(255, 0, 0),
-						bg2: self.rgb(0, 204, 0),
+						fg1: combineRgb(255, 255, 255),
+						bg1: combineRgb(255, 0, 0),
+						bg2: combineRgb(0, 204, 0),
 					}
 				}
 			]
@@ -1377,22 +1715,24 @@ module.exports = {
 
 		// OSD State
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show On Screen Display Status',
-			bank: {
+			name: 'Show On Screen Display Status',
+			style: {
 				style: 'text',
 				text: 'OSD: $(ChristiePj:osd_state)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
+			steps: [],
 			feedbacks: [
 				{
-					type: 'osd_enabled',
+					feedbackId: 'osd_enabled',
 					options: {
-						fg1: self.rgb(255, 255, 255),
-						bg1: self.rgb(255, 0, 0),
-						bg2: self.rgb(0, 204, 0),
+						fg1: combineRgb(255, 255, 255),
+						bg1: combineRgb(255, 0, 0),
+						bg2: combineRgb(0, 204, 0),
 					}
 				}
 			]
@@ -1400,22 +1740,24 @@ module.exports = {
 
 		// PIP State
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show Picture In Picture Status',
-			bank: {
+			name: 'Show Picture In Picture Status',
+			style: {
 				style: 'text',
 				text: 'PIP: $(ChristiePj:osd_state)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
+			steps: [],
 			feedbacks: [
 				{
-					type: 'pip_state',
+					feedbackId: 'pip_state',
 					options: {
-						fg1: self.rgb(255, 255, 255),
-						bg1: self.rgb(255, 0, 0),
-						bg2: self.rgb(0, 204, 0),
+						fg1: combineRgb(255, 255, 255),
+						bg1: combineRgb(255, 0, 0),
+						bg2: combineRgb(0, 204, 0),
 					}
 				}
 			]
@@ -1423,251 +1765,337 @@ module.exports = {
 
 		// Input Channel
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show Input Channel',
-			bank: {
+			name: 'Show Input Channel',
+			style: {
 				style: 'text',
 				text: 'CH: $(ChristiePj:input_channel)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
+			steps: [],
+			feedbacks: []
 		});
 
 		// Input Slot
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show Input Slot',
-			bank: {
+			name: 'Show Input Slot',
+			style: {
 				style: 'text',
 				text: 'Slot: $(ChristiePj:input_slot)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
+			steps: [],
+			feedbacks: []
 		});
 
 		// Lamp 1 ON Time
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show Lamp 1 ON Time',
-			bank: {
+			name: 'Show Lamp 1 ON Time',
+			style: {
 				style: 'text',
 				text: 'Lamp 1: $(ChristiePj:lamp_1)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lph'
+					down: [
+						{
+							actionId: 'lph',
+							options: {}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
 		// Lamp 2 ON Time
 		presets.push({
+			type: 'button',
 			category: 'Status',
-			label: 'Show Lamp 2 ON Time',
-			bank: {
+			name: 'Show Lamp 2 ON Time',
+			style: {
 				style: 'text',
 				text: 'Lamp 2: $(ChristiePj:lamp_2)',
 				size: 'auto',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lph'
+					down: [
+						{
+							actionId: 'lph',
+							options: {}
+						}
+					],
+					up: []
 				}
 			],
+			feedbacks: []
 		});
 
-		/**************LENS SHIFT CONTROLS ************/
+		//**************LENS SHIFT CONTROLS ***********
 		presets.push({
+			type: 'button',
 			category: 'Lens Shift',
-			label: 'LEFT',
-			bank: {
+			name: 'LEFT',
+			style: {
 				style: 'png',
 				text: '',
 				png64: self.ICON_LEFT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lensshift_move_h_pos',
+					down: [
+						{
+							actionId: 'lensshift_move_h_pos',
+							options: {},
+						}
+					],
+					up: [
+						{
+							actionId: 'lensshift_move_h_stop',
+							options: {},
+						}
+					]
 				}
 			],
-			release_actions: [
-				{
-					action: 'lensshift_move_h_stop',
-				}
-			]
+			feedbacks: []
 		})
 
 		presets.push({
+			type: 'button',
 			category: 'Lens Shift',
-			label: 'RIGHT',
-			bank: {
+			name: 'RIGHT',
+			style: {
 				style: 'png',
 				text: '',
 				png64: self.ICON_RIGHT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lensshift_move_h_neg',
+					down: [
+						{
+							actionId: 'lensshift_move_h_neg',
+							options: {},
+						}
+					],
+					up: [
+						{
+							actionId: 'lensshift_move_h_stop',
+							options: {},
+						}
+					]
 				}
 			],
-			release_actions: [
-				{
-					action: 'lensshift_move_h_stop',
-				}
-			]
+			feedbacks: []
 		})
 
 		presets.push({
+			type: 'button',
 			category: 'Lens Shift',
-			label: 'UP',
-			bank: {
+			name: 'UP',
+			style: {
 				style: 'png',
 				text: '',
 				png64: self.ICON_UP,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lensshift_move_v_neg',
+					down: [
+						{
+							actionId: 'lensshift_move_v_neg',
+							options: {},
+						}
+					],
+					up: [
+						{
+							actionId: 'lensshift_move_v_stop',
+							options: {},
+						}
+					]
 				}
 			],
-			release_actions: [
-				{
-					action: 'lensshift_move_v_stop',
-				}
-			]
+			feedbacks: []
 		})
 
 		presets.push({
+			type: 'button',
 			category: 'Lens Shift',
-			label: 'DOWN',
-			bank: {
+			name: 'DOWN',
+			style: {
 				style: 'png',
 				text: '',
 				png64: self.ICON_DOWN,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lensshift_move_v_pos',
+					down: [
+						{
+							actionId: 'lensshift_move_v_pos',
+							options: {},
+						}
+					],
+					up: [
+						{
+							actionId: 'lensshift_move_v_stop',
+							options: {},
+						}
+					]
 				}
 			],
-			release_actions: [
-				{
-					action: 'lensshift_move_v_stop',
-				}
-			]
+			feedbacks: []
 		})
 
 		presets.push({
+			type: 'button',
 			category: 'Lens Shift',
-			label: 'Focus -',
-			bank: {
+			name: 'Focus -',
+			style: {
 				style: 'png',
 				text: 'F-',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lensshift_focus_neg',
+					down: [
+						{
+							actionId: 'lensshift_focus_neg',
+							options: {},
+						}
+					],
+					up: [
+						{
+							actionId: 'lensshift_focus_stop',
+							options: {},
+						}
+					]
 				}
 			],
-			release_actions: [
-				{
-					action: 'lensshift_focus_stop',
-				}
-			]
+			feedbacks: []
 		})
 
 		presets.push({
+			type: 'button',
 			category: 'Lens Shift',
-			label: 'Focus +',
-			bank: {
+			name: 'Focus +',
+			style: {
 				style: 'png',
 				text: 'F+',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lensshift_focus_pos',
+					down: [
+						{
+							actionId: 'lensshift_focus_pos',
+							options: {},
+						}
+					],
+					up: [
+						{
+							actionId: 'lensshift_focus_stop',
+							options: {},
+						}
+					]
 				}
 			],
-			release_actions: [
-				{
-					action: 'lensshift_focus_stop',
-				}
-			]
+			feedbacks: []
 		})
 
 		presets.push({
+			type: 'button',
 			category: 'Lens Shift',
-			label: 'Zoom -',
-			bank: {
+			name: 'Zoom -',
+			style: {
 				style: 'png',
 				text: 'Z-',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lensshift_zoom_neg',
+					down: [
+						{
+							actionId: 'lensshift_zoom_neg',
+							options: {},
+						}
+					],
+					up: [
+						{
+							actionId: 'lensshift_zoom_stop',
+							options: {},
+						}
+					]
 				}
 			],
-			release_actions: [
-				{
-					action: 'lensshift_zoom_stop',
-				}
-			]
+			feedbacks: []
 		})
 
 		presets.push({
+			type: 'button',
 			category: 'Lens Shift',
-			label: 'Zoom +',
-			bank: {
+			name: 'Zoom +',
+			style: {
 				style: 'png',
 				text: 'Z+',
 				size: '18',
 				color: '16777215',
-				bgcolor: self.rgb(0, 0, 0)
+				bgcolor: combineRgb(0, 0, 0)
 			},
-			actions: [
+			steps: [
 				{
-					action: 'lensshift_zoom_pos',
+					down: [
+						{
+							actionId: 'lensshift_zoom_pos',
+							options: {},
+						}
+					],
+					up: [
+						{
+							actionId: 'lensshift_zoom_stop',
+							options: {},
+						}
+					]
 				}
 			],
-			release_actions: [
-				{
-					action: 'lensshift_zoom_stop',
-				}
-			]
+			feedbacks: []
 		})
 	
-		return presets;
+		self.setPresetDefinitions(presets);
 	}
 }

@@ -1,55 +1,52 @@
 module.exports = {
-	// ##########################
-	// #### Define Variables ####
-	// ##########################
-	setVariables: function () {
-		let self = this;
+	initVariables: function () {
 		let variables = [];
 
-		variables.push({ label: 'Total Hours On Lamp 1', name: 'lamp_1' });
-		variables.push({ label: 'Total Hours On Lamp 2', name: 'lamp_2' });	
-		variables.push({ label: 'Power State', name: 'power_state' });
-		variables.push({ label: 'Standby', name: 'standby' });	
-		variables.push({ label: 'Signal State', name: 'signal_state' });	
-		variables.push({ label: 'OSD Enabled', name: 'osd_enabled' });	
-		variables.push({ label: 'Shutter State', name: 'shutter_closed' });	
-		variables.push({ label: 'Input Channel', name: 'input_channel' });	
-		variables.push({ label: 'Input Slot', name: 'input_slot' });	
-		variables.push({ label: 'PIP Enabled', name: 'pip_enabled' });
+		variables.push({ name: 'Total Hours On Lamp 1', variableId: 'lamp_1' });
+		variables.push({ name: 'Total Hours On Lamp 2', variableId: 'lamp_2' });	
+		variables.push({ name: 'Power State', variableId: 'power_state' });
+		variables.push({ name: 'Standby', variableId: 'standby' });	
+		variables.push({ name: 'Signal State', variableId: 'signal_state' });	
+		variables.push({ name: 'OSD Enabled', variableId: 'osd_enabled' });	
+		variables.push({ name: 'Shutter State', variableId: 'shutter_closed' });	
+		variables.push({ name: 'Input Channel', variableId: 'input_channel' });	
+		variables.push({ name: 'Input Slot', variableId: 'input_slot' });	
+		variables.push({ name: 'PIP Enabled', variableId: 'pip_enabled' });
 
-		variables.push({ label: 'Motor Position - Horizontal', name: 'motorposition_h' });
-		variables.push({ label: 'Motor Position - Vertical', name: 'motorposition_v' });
-		variables.push({ label: 'Motor Position - Zoom', name: 'motorposition_z' });
-		variables.push({ label: 'Motor Position - Focus', name: 'motorposition_f' });
+		variables.push({ name: 'Motor Position - Horizontal', variableId: 'motorposition_h' });
+		variables.push({ name: 'Motor Position - Vertical', variableId: 'motorposition_v' });
+		variables.push({ name: 'Motor Position - Zoom', variableId: 'motorposition_z' });
+		variables.push({ name: 'Motor Position - Focus', variableId: 'motorposition_f' });
 
-		return variables
+		this.setVariableDefinitions(variables);
 	},
 
-	// #########################
-	// #### Check Variables ####
-	// #########################
 	checkVariables: function () {
 		let self = this;
 
 		try {
-			self.setVariable('lamp_1', self.lamp_1);
-			self.setVariable('lamp_2', self.lamp_2);
-			self.setVariable('power_state', self.power_state);
-			self.setVariable('standby', self.standby);
-			self.setVariable('signal_state', self.signal_state);
-			self.setVariable('osd_enabled', self.osd_enabled);
-			self.setVariable('shutter_closed', self.shutter_closed);
-			self.setVariable('input_channel', self.input_channel);
-			self.setVariable('input_slot', self.input_slot_label);
-			self.setVariable('pip_enabled', self.pip_enabled);
+			let variableObj = {};
 
-			self.setVariable('motorposition_h', self.motorposition_h);
-			self.setVariable('motorposition_v', self.motorposition_v);
-			self.setVariable('motorposition_z', self.motorposition_z);
-			self.setVariable('motorposition_f', self.motorposition_f);
+			variableObj.lamp_1 = self.lamp_1;
+			variableObj.lamp_2 = self.lamp_2;
+			variableObj.power_state = self.power_state;
+			variableObj.standby = self.standby;
+			variableObj.signal_state = self.signal_state;
+			variableObj.osd_enabled = self.osd_enabled;
+			variableObj.shutter_closed = self.shutter_closed;
+			variableObj.input_channel = self.input_channel;
+			variableObj.input_slot = self.input_slot_label;
+			variableObj.pip_enabled = self.pip_enabled;
+
+			variableObj.motorposition_h = self.motorposition_h;
+			variableObj.motorposition_v = self.motorposition_v;
+			variableObj.motorposition_z = self.motorposition_z;
+			variableObj.motorposition_f = self.motorposition_f;
+
+			self.setVariableValues(variableObj);
 		}
 		catch(error) {
-			self.log('error', 'Error setting Variables from Device: ' + String(error));
+			self.log('error', 'Error setting Variables: ' + String(error));
 		}
 	}
 }

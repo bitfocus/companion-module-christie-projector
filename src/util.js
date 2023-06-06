@@ -1,3 +1,5 @@
+const { InstanceStatus } = require('@companion-module/base')
+
 module.exports = {
 	pad2: function(num) {
 		return this.padAmount(num, 2);
@@ -28,5 +30,9 @@ module.exports = {
 		}
 
 		return s;
+	},
+
+	clearWarning: function() {
+		this.updateStatus(InstanceStatus.Ok);
 	}
 }

@@ -1,16 +1,12 @@
 const choices = require('./choices.js');
-const util = require('./util.js');
 
 module.exports = {
-	// ##########################
-	// #### Instance Actions ####
-	// ##########################
-	setActions: function () {
+	initActions: function () {
 		let self = this;
 		let actions = {};
 
 		actions.alc = {
-			label: 'Automatic Lens Calibration On / Off',
+			name: 'Automatic Lens Calibration On / Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -20,7 +16,7 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(ALC ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -29,7 +25,7 @@ module.exports = {
 		}
 
 		actions.apw = {
-			label: 'Auto Power Up On / Off',
+			name: 'Auto Power Up On / Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -39,7 +35,7 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(APW ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -47,7 +43,7 @@ module.exports = {
 		}
 
 		actions.aro = {
-			label: 'Aspect Ratio Overlay / Off',
+			name: 'Aspect Ratio Overlay / Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -57,7 +53,7 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(ARO ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -65,7 +61,7 @@ module.exports = {
 		}
 
 		actions.asr = {
-			label: 'Auto Source On / Off',
+			name: 'Auto Source On / Off',
 			options: [
 				{
 					type: 'number',
@@ -86,16 +82,17 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(ASR ' + util.pad2(opt.p1) + ' ' + opt.p2 + ')';
+				let cmd = '(ASR ' + this.pad2(opt.p1) + ' ' + opt.p2 + ')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.asu = {
-			label: 'Auto Setup',
-			callback: function(action, bank) {
+			name: 'Auto Setup',
+			options: [],
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(ASU)';
 				self.sendCommand(cmd);
@@ -103,7 +100,7 @@ module.exports = {
 		}
 
 		actions.brt = {
-			label: 'Brightness',
+			name: 'Brightness',
 			options: [
 				{
 					type: 'number',
@@ -117,15 +114,15 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(BRT ' + util.pad4(opt.p1) + ')';
+				let cmd = '(BRT ' + this.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.ccs = {
-			label: 'Select Output Color',
+			name: 'Select Output Color',
 			options: [
 				{
 					type: 'dropdown',
@@ -135,7 +132,7 @@ module.exports = {
 					choices: choices.colorProfile
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(CCS ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -143,7 +140,7 @@ module.exports = {
 		}
 
 		actions.cha = {
-			label: 'Channel Select',
+			name: 'Channel Select',
 			options: [
 				{
 					type: 'number',
@@ -157,15 +154,15 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(CHA ' + util.pad2(opt.p1) + ')';
+				let cmd = '(CHA ' + this.pad2(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.cle = {
-			label: 'Color Enable',
+			name: 'Color Enable',
 			options: [
 				{
 					type: 'dropdown',
@@ -175,7 +172,7 @@ module.exports = {
 					choices: choices.colorName
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(CLE ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -183,7 +180,7 @@ module.exports = {
 		}
 
 		actions.clr = {
-			label: 'Color Intensity',
+			name: 'Color Intensity',
 			options: [
 				{
 					type: 'number',
@@ -197,15 +194,15 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(CLR ' + util.pad4(opt.p1) + ')';
+				let cmd = '(CLR ' + this.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.con = {
-			label: 'Contrast',
+			name: 'Contrast',
 			options: [
 				{
 					type: 'number',
@@ -219,15 +216,15 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(CON ' + util.pad4(opt.p1) + ')';
+				let cmd = '(CON ' + this.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.csp = {
-			label: 'Color Space',
+			name: 'Color Space',
 			options: [
 				{
 					type: 'dropdown',
@@ -237,7 +234,7 @@ module.exports = {
 					choices: choices.colorSpace
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(CSP ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -245,7 +242,7 @@ module.exports = {
 		}
 
 		actions.def = {
-			label: 'Factory Defaults',
+			name: 'Factory Defaults',
 			options: [
 				{
 					type: 'dropdown',
@@ -258,7 +255,7 @@ module.exports = {
 				]
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(DEF ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -266,7 +263,7 @@ module.exports = {
 		}
 
 		actions.eme = {
-			label: 'Error Message Enable',
+			name: 'Error Message Enable',
 			options: [
 				{
 					type: 'dropdown',
@@ -276,7 +273,7 @@ module.exports = {
 					choices: choices.errorEnable
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(EME ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -284,7 +281,7 @@ module.exports = {
 		}
 
 		actions.fcs = {
-			label: 'Focus (Fixed)',
+			name: 'Focus (Fixed)',
 			options: [
 				{
 					type: 'number',
@@ -298,15 +295,15 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(FCS ' + util.pad4(opt.p1) + ')';
+				let cmd = '(FCS ' + this.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.fil = {
-			label: 'Input Filter',
+			name: 'Input Filter',
 			options: [
 				{
 					type: 'dropdown',
@@ -316,7 +313,7 @@ module.exports = {
 					choices: choices.inputFilter
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(FIL ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -324,7 +321,7 @@ module.exports = {
 		}
 
 		actions.frz = {
-			label: 'Freeze On / Off',
+			name: 'Freeze On / Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -334,7 +331,7 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(FRZ ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -342,7 +339,7 @@ module.exports = {
 		}
 
 		actions.gam = {
-			label: 'Gamma',
+			name: 'Gamma',
 			options: [
 				{
 					type: 'number',
@@ -356,7 +353,7 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(GAM ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -364,7 +361,7 @@ module.exports = {
 		}
 
 		actions.hor = {
-			label: 'Horizontal Position',
+			name: 'Horizontal Position',
 			options: [
 				{
 					type: 'number',
@@ -378,7 +375,7 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(HOR' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -386,7 +383,7 @@ module.exports = {
 		}
 
 		actions.ils = {
-			label: 'Intelligent Lens System On/Off',
+			name: 'Intelligent Lens System On/Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -396,7 +393,7 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(ILS ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -404,7 +401,7 @@ module.exports = {
 		}
 
 		actions.iop = {
-			label: 'Image Optimization',
+			name: 'Image Optimization',
 			options: [
 				{
 					type: 'dropdown',
@@ -414,7 +411,7 @@ module.exports = {
 					choices: choices.imageOpti
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(IOP ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -422,7 +419,7 @@ module.exports = {
 		}
 
 		actions.itpBasic = {
-			label: 'Internal testpattern Basic collection (general use)',
+			name: 'Internal testpattern Basic collection (general use)',
 			options: [
 				{
 					type: 'text',
@@ -439,7 +436,7 @@ module.exports = {
 					choices: choices.tpatBasic
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(ITP ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -447,7 +444,7 @@ module.exports = {
 		}
 
 		actions.itpBoxer = {
-			label: 'Internal testpattern Boxer series',
+			name: 'Internal testpattern Boxer series',
 			options: [
 				{
 					type: 'text',
@@ -464,7 +461,7 @@ module.exports = {
 					choices: choices.tpatBoxer
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(ITP ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -472,7 +469,7 @@ module.exports = {
 		}
 
 		actions.itpMser = {
-			label: 'Internal testpattern M series',
+			name: 'Internal testpattern M series',
 			options: [
 				{
 					type: 'text',
@@ -489,7 +486,7 @@ module.exports = {
 					choices: choices.tpatMser
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(ITP ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -497,7 +494,7 @@ module.exports = {
 		}
 
 		actions.ken = {
-			label: 'Keypad Enable',
+			name: 'Keypad Enable',
 			options: [
 				{
 					type: 'dropdown',
@@ -514,7 +511,7 @@ module.exports = {
 					choices: choices.keypadEnableP2
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(KEN ' + opt.p1 + ' ' + opt.p2 + ')';
 				self.sendCommand(cmd);
@@ -522,7 +519,7 @@ module.exports = {
 		}
 
 		actions.key = {
-			label: 'Key Code / Key Press',
+			name: 'Key Code / Key Press',
 			options: [
 				{
 					type: 'dropdown',
@@ -532,7 +529,7 @@ module.exports = {
 					choices: choices.keyCode
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(KEY ' + opt.p1 + ')(KEY ' + (Number(opt.p1) + 128) + ')';
 				self.sendCommand(cmd);
@@ -540,7 +537,7 @@ module.exports = {
 		}
 
 		actions.lcb = {
-			label: 'Lens Calibrate',
+			name: 'Lens Calibrate',
 			options: [
 				{
 					type: 'dropdown',
@@ -550,7 +547,7 @@ module.exports = {
 					choices: choices.lensCal
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(LCB ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -559,7 +556,8 @@ module.exports = {
 
 		actions.lcn = {
 			label: 'Lens Center',
-			callback: function(action, bank) {
+			options: [],
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(LCN)';
 				self.sendCommand(cmd);
@@ -567,7 +565,7 @@ module.exports = {
 		}
 
 		actions.lco = {
-			label: 'Lamp Conditioning On/Off',
+			name: 'Lamp Conditioning On/Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -577,7 +575,7 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(LCO ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -585,7 +583,7 @@ module.exports = {
 		}
 
 		actions.lng = {
-			label: 'Language',
+			name: 'Language',
 			options: [
 				{
 					type: 'dropdown',
@@ -595,7 +593,7 @@ module.exports = {
 					choices: choices.language
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(LNG ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -603,7 +601,7 @@ module.exports = {
 		}
 
 		actions.lop = {
-			label: 'Lamp Operation',
+			name: 'Lamp Operation',
 			options: [
 				{
 					type: 'dropdown',
@@ -613,7 +611,7 @@ module.exports = {
 					choices: choices.lampOp
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(LOP ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -621,7 +619,7 @@ module.exports = {
 		}
 
 		actions.lpc = {
-			label: 'Lamp Changed',
+			name: 'Lamp Changed',
 			options: [
 				{
 					type: 'textinput',
@@ -632,7 +630,7 @@ module.exports = {
 					regex: '/^.{1,8}$/' // limit to min 1 and max 8 charactors
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(LPC ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -640,8 +638,9 @@ module.exports = {
 		}
 
 		actions.lph = {
-			label: 'Lamp Hours Of Use?',
-			callback: function(action, bank) {
+			name: 'Lamp Hours Of Use?',
+			options: [],
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(LPH?)';
 				self.sendCommand(cmd);
@@ -649,7 +648,7 @@ module.exports = {
 		}
 
 		actions.lpi = {
-			label: 'Lamp Intensity',
+			name: 'Lamp Intensity',
 			options: [
 				{
 					type: 'number',
@@ -663,15 +662,15 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(LPI ' + util.pad4(opt.p1) +')';
+				let cmd = '(LPI ' + this.pad4(opt.p1) +')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lpm = {
-			label: 'Lamp Mode',
+			name: 'Lamp Mode',
 			options: [
 				{
 					type: 'dropdown',
@@ -681,7 +680,7 @@ module.exports = {
 					choices: choices.lampMode
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(LPM ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -689,7 +688,7 @@ module.exports = {
 		}
 
 		actions.mot = {
-			label: 'Motion Filter',
+			name: 'Motion Filter',
 			options: [
 				{
 					type: 'dropdown',
@@ -699,7 +698,7 @@ module.exports = {
 					choices: choices.motionFilter
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(MOT ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -707,7 +706,7 @@ module.exports = {
 		}
 
 		actions.osd = {
-			label: 'On Screen Display On/Off',
+			name: 'On Screen Display On/Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -717,7 +716,7 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(OSD ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -725,7 +724,7 @@ module.exports = {
 		}
 
 		actions.pip = {
-			label: 'Picture In Picture On/Off',
+			name: 'Picture In Picture On/Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -735,7 +734,7 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(PIP ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -743,7 +742,7 @@ module.exports = {
 		}
 
 		actions.ppp = {
-			label: 'PIP Position Preset',
+			name: 'PIP Position Preset',
 			options: [
 				{
 					type: 'dropdown',
@@ -753,7 +752,7 @@ module.exports = {
 					choices: choices.pipPreset
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(PPP ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -762,7 +761,8 @@ module.exports = {
 
 		actions.pps = {
 			label: 'Picture In Picture Swap',
-			callback: function(action, bank) {
+			options: [],
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(PPS)';
 				self.sendCommand(cmd);
@@ -770,7 +770,7 @@ module.exports = {
 		}
 
 		actions.pwr = {
-			label: 'Power On/Off',
+			name: 'Power On/Off',
 			options: [
 				{
 					type: 'dropdown',
@@ -780,7 +780,7 @@ module.exports = {
 					choices: choices.OnOff
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(PWR ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -788,7 +788,7 @@ module.exports = {
 		}
 
 		actions.sde = {
-			label: 'Source Dialog Enable',
+			name: 'Source Dialog Enable',
 			options: [
 				{
 					type: 'dropdown',
@@ -798,7 +798,7 @@ module.exports = {
 					choices: choices.EnableDisable
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(SDE ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -806,7 +806,7 @@ module.exports = {
 		}
 
 		actions.shu = {
-			label: 'Shutter Open / Close',
+			name: 'Shutter Open / Close',
 			options: [
 				{
 					type: 'dropdown',
@@ -816,15 +816,15 @@ module.exports = {
 					choices: choices.shutter
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(SHU ' + util.pad3(opt.p1) +')';
+				let cmd = '(SHU ' + this.pad3(opt.p1) +')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.sin = {
-			label: 'Select Input',
+			name: 'Select Input',
 			options: [
 				{
 					type: 'dropdown',
@@ -834,7 +834,7 @@ module.exports = {
 					choices: choices.inputSelect
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(SIN ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -842,7 +842,7 @@ module.exports = {
 		}
 
 		actions.sor = {
-			label: 'Select Orientation',
+			name: 'Select Orientation',
 			options: [
 				{
 					type: 'dropdown',
@@ -852,7 +852,7 @@ module.exports = {
 					choices: choices.selectOri
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(SOR ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -860,7 +860,7 @@ module.exports = {
 		}
 
 		actions.std = {
-			label: 'Video Standard',
+			name: 'Video Standard',
 			options: [
 				{
 					type: 'dropdown',
@@ -870,7 +870,7 @@ module.exports = {
 					choices: choices.videoStandard
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(STD ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -878,7 +878,7 @@ module.exports = {
 		}
 
 		actions.szp = {
-			label: 'Size Presets Position',
+			name: 'Size Presets Position',
 			options: [
 				{
 					type: 'dropdown',
@@ -888,7 +888,7 @@ module.exports = {
 					choices: choices.size
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(SZP ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -896,7 +896,7 @@ module.exports = {
 		}
 
 		actions.tnt = {
-			label: 'Tint',
+			name: 'Tint',
 			options: [
 				{
 					type: 'number',
@@ -910,7 +910,7 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(TNT ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -918,7 +918,7 @@ module.exports = {
 		}
 
 		actions.vrt = {
-			label: 'Vertical Position',
+			name: 'Vertical Position',
 			options: [
 				{
 					type: 'number',
@@ -932,7 +932,7 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				},
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(VRT ' + opt.p1 +')';
 				self.sendCommand(cmd);
@@ -940,7 +940,7 @@ module.exports = {
 		}
 
 		actions.wps = {
-			label: 'Geometry Correction (General)',
+			name: 'Geometry Correction (General)',
 			options: [
 				{
 					type: 'dropdown',
@@ -950,7 +950,7 @@ module.exports = {
 					choices: choices.warpSelBasic
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(WPS ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -958,7 +958,7 @@ module.exports = {
 		}
 
 		actions.wrp = {
-			label: 'Geometry Correction (Mseries & Boxer)',
+			name: 'Geometry Correction (Mseries & Boxer)',
 			options: [
 				{
 					type: 'dropdown',
@@ -968,7 +968,7 @@ module.exports = {
 					choices: choices.warpSelMseries
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
 				let cmd = '(WRP+SLCT ' + opt.p1 + ')';
 				self.sendCommand(cmd);
@@ -976,7 +976,7 @@ module.exports = {
 		}
 
 		actions.zom = {
-			label: 'Zoom (Fixed)',
+			name: 'Zoom (Fixed)',
 			options: [
 				{
 					type: 'number',
@@ -990,39 +990,42 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(ZOM ' + util.pad4(opt.p1) + ')';
+				let cmd = '(ZOM ' + this.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_move_h_neg = {
-			label: 'Lens Shift - Start to Move Horizontal Motor to Negative Max',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Start to Move Horizontal Motor to Negative Max',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+HRUN-1)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_move_h_pos = {
-			label: 'Lens Shift - Start to Move Horizontal Motor to Positive Max',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Start to Move Horizontal Motor to Positive Max',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+HRUN1)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_move_h_stop = {
-			label: 'Lens Shift - Stop Move Horizontal Motor',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Stop Move Horizontal Motor',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+HRUN0)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_move_h_number = {
-			label: 'Lens Shift - Move Horizontal Motor to Position',
+			name: 'Lens Shift - Move Horizontal Motor to Position',
 			options: [
 				{
 					type: 'number',
@@ -1036,39 +1039,42 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options;
-				let cmd = '(LHO ' + util.pad4(opt.pos) + ')';
+				let cmd = '(LHO ' + this.pad4(opt.pos) + ')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_move_v_neg = {
-			label: 'Lens Shift - Start to Move Vertical Motor to Negative Max',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Start to Move Vertical Motor to Negative Max',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+VRUN-1)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_move_v_pos = {
-			label: 'Lens Shift - Start to Move Vertical Motor to Positive Max',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Start to Move Vertical Motor to Positive Max',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+VRUN1)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_move_v_stop = {
-			label: 'Lens Shift - Stop Move Vertical Motor',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Stop Move Vertical Motor',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+VRUN0)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_move_v_number = {
-			label: 'Lens Shift - Move Vertical Motor to Position',
+			name: 'Lens Shift - Move Vertical Motor to Position',
 			options: [
 				{
 					type: 'number',
@@ -1082,61 +1088,67 @@ module.exports = {
 					regex: self.REGEX_NUMBER
 				}
 			],
-			callback: function(action, bank) {
+			callback: async function (action) {
 				let opt = action.options;
-				let cmd = '(LVO ' + util.pad4(opt.pos) + ')';
+				let cmd = '(LVO ' + this.pad4(opt.pos) + ')';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_focus_neg = {
-			label: 'Lens Shift - Start to Move Focus Motor to Negative Max',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Start to Move Focus Motor to Negative Max',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+FRUN-1)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_focus_pos = {
-			label: 'Lens Shift - Start to Move Focus Motor to Positive Max',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Start to Move Focus Motor to Positive Max',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+FRUN1)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_focus_stop = {
-			label: 'Lens Shift - Stop Move Focus Motor',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Stop Move Focus Motor',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+FRUN0)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_zoom_neg = {
-			label: 'Lens Shift - Start to Move Zoom Motor to Negative Max',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Start to Move Zoom Motor to Negative Max',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+ZRUN-1)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_zoom_pos = {
-			label: 'Lens Shift - Start to Move Zoom Motor to Positive Max',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Start to Move Zoom Motor to Positive Max',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+ZRUN1)';
 				self.sendCommand(cmd);
 			}
 		}
 
 		actions.lensshift_zoom_stop = {
-			label: 'Lens Shift - Stop Move Zoom Motor',
-			callback: function(action, bank) {
+			name: 'Lens Shift - Stop Move Zoom Motor',
+			options: [],
+			callback: async function (action) {
 				let cmd = '(LMV+ZRUN0)';
 				self.sendCommand(cmd);
 			}
 		}
 
-		return actions
+		self.setActionDefinitions(actions);
 	}
 }
