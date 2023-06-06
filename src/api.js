@@ -153,7 +153,7 @@ module.exports = {
 				}
 				catch(error) {
 					self.debug('Error processing data: %s', error);
-					self.updateStatus(InstanceStatus.Warning);
+					//self.updateStatus(InstanceStatus.Warning);
 					self.log('warn', 'Error processing data: ' + error.toString());
 					setTimeout(self.clearWarning.bind(self), 5000);
 				}
@@ -211,7 +211,7 @@ module.exports = {
 					}
 	
 					self.debug("Network Warning", data);
-					self.updateStatus(InstanceStatus.Warning);
+					//self.updateStatus(InstanceStatus.Warning);
 					self.log('warn', 'Warning ' + msg + ': ' + data);
 	
 					setTimeout(self.clearWarning.bind(self), 5000);
