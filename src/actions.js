@@ -84,7 +84,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(ASR ' + this.pad2(opt.p1) + ' ' + opt.p2 + ')';
+				let cmd = '(ASR ' + self.pad2(opt.p1) + ' ' + opt.p2 + ')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -116,7 +116,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(BRT ' + this.pad4(opt.p1) + ')';
+				let cmd = '(BRT ' + self.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -156,7 +156,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(CHA ' + this.pad2(opt.p1) + ')';
+				let cmd = '(CHA ' + self.pad2(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -196,7 +196,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(CLR ' + this.pad4(opt.p1) + ')';
+				let cmd = '(CLR ' + self.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -218,7 +218,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(CON ' + this.pad4(opt.p1) + ')';
+				let cmd = '(CON ' + self.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -297,7 +297,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(FCS ' + this.pad4(opt.p1) + ')';
+				let cmd = '(FCS ' + self.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -664,7 +664,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(LPI ' + this.pad4(opt.p1) +')';
+				let cmd = '(LPI ' + self.pad4(opt.p1) +')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -818,7 +818,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(SHU ' + this.pad3(opt.p1) +')';
+				let cmd = '(SHU ' + self.pad3(opt.p1) +')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -992,7 +992,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let cmd = '(ZOM ' + this.pad4(opt.p1) + ')';
+				let cmd = '(ZOM ' + self.pad4(opt.p1) + ')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -1041,7 +1041,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options;
-				let cmd = '(LHO ' + this.pad4(opt.pos) + ')';
+				let cmd = '(LHO ' + self.pad4(opt.pos) + ')';
 				self.sendCommand(cmd);
 			}
 		}
@@ -1090,7 +1090,7 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options;
-				let cmd = '(LVO ' + this.pad4(opt.pos) + ')';
+				let cmd = '(LVO ' + self.pad4(opt.pos) + ')';
 				self.sendCommand(cmd);
 			}
 		}
