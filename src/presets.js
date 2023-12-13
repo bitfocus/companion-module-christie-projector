@@ -1,6 +1,6 @@
 const { combineRgb } = require('@companion-module/base')
-
 const choices = require('./choices.js');
+const ICONS = require('./icons.js')
 
 module.exports = {
 	initPresets: function () {
@@ -1855,7 +1855,7 @@ module.exports = {
 			style: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_LEFT,
+				png64: ICONS.LEFT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -1887,7 +1887,7 @@ module.exports = {
 			style: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_RIGHT,
+				png64: ICONS.RIGHT,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -1919,7 +1919,7 @@ module.exports = {
 			style: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_UP,
+				png64: ICONS.UP,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
@@ -1951,7 +1951,7 @@ module.exports = {
 			style: {
 				style: 'png',
 				text: '',
-				png64: self.ICON_DOWN,
+				png64: ICONS.DOWN,
 				pngalignment: 'center:center',
 				size: '18',
 				color: '16777215',
