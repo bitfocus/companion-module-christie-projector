@@ -100,7 +100,7 @@ module.exports = {
 										case 23:
 											self.power_state = 'Off';
 											break;
-										case 01:
+										case 1:
 										case 11:
 											self.power_state = 'On';
 											break;
@@ -116,6 +116,81 @@ module.exports = {
 	
 								if (data_cmd_function === 'SST+CONF') {
 									//model, serial, etc. info
+								}
+
+								if (data_cmd_function === 'SST+SIGN') {
+									//signal info
+									/*
+									(SST+SIGN!000 000 "Good Signal" "Main Signal State")
+									(SST+SIGN!001 000 "67.43kHz+ p59.94Hz+" "Main Input Frequency")
+									(SST+SIGN!002 000 "H: 308ns V: 5.00 lines" "Main Sync Width")
+									(SST+SIGN!003 000 "Digital DisplayPort" "Main Sync Type")
+									(SST+SIGN!004 000 "Progressive" "Main Signal Type")
+									(SST+SIGN!005 000 "148.35MHz" "Main Pixel Rate")
+									(SST+SIGN!010 000 "N/A" "PIP Signal State")
+									(SST+SIGN!011 000 "N/A" "PIP Input Frequency")
+									(SST+SIGN!012 000 "N/A" "PIP Sync Width")
+									(SST+SIGN!013 000 "N/A" "PIP Sync Type")
+									(SST+SIGN!014 000 "N/A" "PIP Signal Type")
+									(SST+SIGN!015 000 "N/A" "PIP Pixel Rate")
+									*/
+									
+									//data_cmd_param will be 000 000 "Good Signal" "Main Signal State"
+
+									let split_data = data_cmd_param.split(' ');
+
+									let variableObj = {}
+
+									if (split_data[0] === '000') {
+										self.signal_state = split_data[2];
+										variableObj['signal_state'] = self.signal_state;
+									}
+									else if (split_data[0] === '001') {
+										self.input_frequency = split_data[2];
+										variableObj['input_frequency'] = self.input_frequency;
+									}
+									else if (split_data[0] === '002') {
+										self.sync_width = split_data[2];
+										variableObj['sync_width'] = self.sync_width;
+									}
+									else if (split_data[0] === '003') {
+										self.sync_type = split_data[2];
+										variableObj['sync_type'] = self.sync_type;
+									}
+									else if (split_data[0] === '004') {
+										self.signal_type = split_data[2];
+										variableObj['signal_type'] = self.signal_type;
+									}
+									else if (split_data[0] === '005') {
+										self.pixel_rate = split_data[2];
+										variableObj['pixel_rate'] = self.pixel_rate;
+									}
+									else if (split_data[0] === '010') {
+										self.pip_signal_state = split_data[2];
+										variableObj['pip_signal_state'] = self.pip_signal_state;
+									}
+									else if (split_data[0] === '011') {
+										self.pip_input_frequency = split_data[2];
+										variableObj['pip_input_frequency'] = self.pip_input_frequency
+									}
+									else if (split_data[0] === '012') {
+										self.pip_sync_width = split_data[2];
+										variableObj['pip_sync_width'] = self.pip_sync_width;
+									}
+									else if (split_data[0] === '013') {
+										self.pip_sync_type = split_data[2];
+										variableObj['pip_sync_type'] = self.pip_sync_type;
+									}
+									else if (split_data[0] === '014') {
+										self.pip_signal_type = split_data[2];
+										variableObj['pip_signal_type'] = self.pip_signal_type
+									}
+									else if (split_data[0] === '015') {
+										self.pip_pixel_rate = split_data[2];
+										variableObj['pip_pixel_rate'] = self.pip_pixel_rate;
+									}
+
+									self.setVariableValues(variableObj)
 								}
 	
 								if (data_cmd_function === 'LVO') {

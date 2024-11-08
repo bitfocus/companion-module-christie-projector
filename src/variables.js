@@ -18,6 +18,21 @@ module.exports = {
 		variables.push({ name: 'Motor Position - Zoom', variableId: 'motorposition_z' });
 		variables.push({ name: 'Motor Position - Focus', variableId: 'motorposition_f' });
 
+		//signal variables
+		//signal_state, input_frequency, sync_width, sync_type, signal_type, pixel_rate, pip_signal_state, pip_input_frequency, pip_sync_width, pip_sync_type, pip_signal_type, pip_pixel_rate
+		variables.push({ name: 'Signal State', variableId: 'signal_state' });
+		variables.push({ name: 'Input Frequency', variableId: 'input_frequency' });
+		variables.push({ name: 'Sync Width', variableId: 'sync_width' });
+		variables.push({ name: 'Sync Type', variableId: 'sync_type' });
+		variables.push({ name: 'Signal Type', variableId: 'signal_type' });
+		variables.push({ name: 'Pixel Rate', variableId: 'pixel_rate' });
+		variables.push({ name: 'PIP Signal State', variableId: 'pip_signal_state' });
+		variables.push({ name: 'PIP Input Frequency', variableId: 'pip_input_frequency' });
+		variables.push({ name: 'PIP Sync Width', variableId: 'pip_sync_width' });
+		variables.push({ name: 'PIP Sync Type', variableId: 'pip_sync_type' });
+		variables.push({ name: 'PIP Signal Type', variableId: 'pip_signal_type' });
+		variables.push({ name: 'PIP Pixel Rate', variableId: 'pip_pixel_rate' });
+
 		this.setVariableDefinitions(variables);
 	},
 
@@ -42,6 +57,19 @@ module.exports = {
 			variableObj.motorposition_v = self.motorposition_v;
 			variableObj.motorposition_z = self.motorposition_z;
 			variableObj.motorposition_f = self.motorposition_f;
+
+			variableObj.signal_state = self.signal_state;
+			variableObj.input_frequency = self.input_frequency;
+			variableObj.sync_width = self.sync_width;
+			variableObj.sync_type = self.sync_type;
+			variableObj.signal_type = self.signal_type;
+			variableObj.pixel_rate = self.pixel_rate;
+			variableObj.pip_signal_state = self.pip_signal_state;
+			variableObj.pip_input_frequency = self.pip_input_frequency;
+			variableObj.pip_sync_width = self.pip_sync_width;
+			variableObj.pip_sync_type = self.pip_sync_type;
+			variableObj.pip_signal_type = self.pip_signal_type;
+			variableObj.pip_pixel_rate = self.pip_pixel_rate;
 
 			self.setVariableValues(variableObj);
 		}
