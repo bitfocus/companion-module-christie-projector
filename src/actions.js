@@ -841,6 +841,45 @@ module.exports = {
 			}
 		}
 
+		actions.sinSlot = {
+			name: 'Select Input by Slot and Input Number',
+			options: [
+				{
+					type: 'textinput',
+					id: 'slot',
+					label: 'Slot Number',
+					default: '1',
+					useVariables: true,
+				},
+				{
+					type: 'textinput',
+					id: 'input',
+					label: 'Input Number',
+					default: '1',
+					useVariables: true,
+				},
+				{
+					type: 'dropdown',
+					label: 'Target',
+					id: 'target',
+					default: 'MAIN',
+					choices: [
+						{ id: 'MAIN', label: 'Main' },
+						{ id: 'PIIP', label: 'PIP' }
+					]
+				}
+			],
+			callback: async function (action) {
+				let opt = action.options
+				let slot = await self.parseVariablesInString(opt.slot);
+				let input = await self.parseVariablesInString(opt.input);
+				let target = opt.target;
+
+				let cmd = `(SIN+${target} ${slot}${input})`;
+				self.sendCommand(cmd);
+			}
+		}
+
 		actions.sor = {
 			name: 'Select Orientation',
 			options: [
