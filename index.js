@@ -44,6 +44,19 @@ class christiePjInstance extends InstanceBase {
 		this.motorposition_v = '';
 		this.motorposition_z = '';
 		this.motorposition_f = '';
+
+		this.signal_state = '';
+		this.input_frequency = '';
+		this.sync_width = '';
+		this.sync_type = '';
+		this.signal_type = '';
+		this.pixel_rate = '';
+		this.pip_signal_state = '';
+		this.pip_input_frequency = '';
+		this.pip_sync_width = '';
+		this.pip_sync_type = '';
+		this.pip_signal_type = '';
+		this.pip_pixel_rate = '';
 	}
 
 	async destroy() {
