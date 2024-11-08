@@ -33,3 +33,7 @@ See HELP.md and LICENSE
 **V4.0.0**
 * Module upgraded to Companion v3 API
 * Other minor improvements as able/noticed
+
+**V4.1.0**
+* Add select input by slot/card and input number
+* Add signal status variables
