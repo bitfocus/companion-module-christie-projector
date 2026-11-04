@@ -871,8 +871,9 @@ module.exports = {
 			],
 			callback: async function (action) {
 				let opt = action.options
-				let slot = await self.parseVariablesInString(opt.slot);
-				let input = await self.parseVariablesInString(opt.input);
+				// API 1.13+ prepares entity text before executeAction IPC.
+				let slot = opt.slot;
+				let input = opt.input;
 				let target = opt.target;
 
 				let cmd = `(SIN+${target} ${slot}${input})`;
